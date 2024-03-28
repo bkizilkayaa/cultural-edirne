@@ -60,7 +60,7 @@ public class FileDataServiceImpl implements StorageService {
     @Override
     public String getFilePathFromStorage(String fileName) {
         FileData fileData = findByName(fileName);
-        return FOLDER_PATH + fileData.getName();
+        return System.getProperty("user.dir") + FOLDER_PATH + fileData.getName();
     }
 
     private Long saveFileDataToDatabase(MultipartFile multiPartFile, String fileName) {
