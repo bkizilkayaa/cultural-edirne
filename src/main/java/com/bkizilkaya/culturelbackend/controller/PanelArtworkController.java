@@ -99,4 +99,38 @@ public class PanelArtworkController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error creating image: " + e.getMessage());
         }
     }
+    @GetMapping("/updateArtworkImages/{id}")
+    public String updateArtworkImages(@PathVariable(value = "id") Long id, Model model) {
+        try {
+            // ArtworkService'e yeni bir metod ekleyin:
+            // void updateArtworkImages(Long artworkId, MultipartFile file)
+            // Bu metod, artwork'e yeni bir resim eklemeli ve veritabanına kaydetmelidir.
+            //artworkService.addImageToArtwork(model.getId(), file);
+            ArtworkResponseDTO artworkResponseDTO = artworkService.getArtworkGivenId(id);
+
+            model.addAttribute("artwork", artworkResponseDTO);
+            return "update_image_artwork";
+        } catch (Exception e) {
+            // Hata durumunda gerekli işlemleri yapabilirsiniz, örneğin:
+            // model.addAttribute("error", e.getMessage());
+            return "error";
+        }
+    }
+    @PostMapping("/updateArtworkImages/{id}/addImages")
+    public String updateAddImagesToArtwork(@PathVariable(value = "id") Long id, Model model, MultipartFile multipartFile) {
+        try {
+            // ArtworkService'e yeni bir metod ekleyin:
+            // void updateArtworkImages(Long artworkId, MultipartFile file)
+            // Bu metod, artwork'e yeni bir resim eklemeli ve veritabanına kaydetmelidir.
+            //artworkService.addImageToArtwork(model.getId(), file);
+            ArtworkResponseDTO artworkResponseDTO = artworkService.getArtworkGivenId(id);
+            artworkService.addImageToArtwork(id, multipartFile);
+            model.addAttribute("artwork", artworkResponseDTO);
+            return "redirect:/artworks-list/showFormForUpdate/"+id;
+        } catch (Exception e) {
+            // Hata durumunda gerekli işlemleri yapabilirsiniz, örneğin:
+            // model.addAttribute("error", e.getMessage());
+            return "error";
+        }
+    }
 }
