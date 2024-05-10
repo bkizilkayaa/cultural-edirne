@@ -6,12 +6,7 @@
     <title>Artworks List</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
-        table {
-            border-collapse: collapse;
-            width: 100%;
-        }
-
-        th, td {
+        th {
             width: 10%;
             border: 1px solid #dddddd;
             text-align: left;
@@ -20,7 +15,14 @@
             overflow-y: auto;
             word-break: break-all;
         }
-
+        td{
+            width: 10%;
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 5px;
+            overflow-y: auto;
+            word-break: break-all;
+        }
         tr p {
             display: block;
             max-height: 220px !important;
@@ -31,61 +33,71 @@
             background-color: #655b5b;
         }
 
-        container-table {
+        .container-table {
             margin: 0 auto;
-            width: 95%;
+            width: 99%;
+        }
+        .test{
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+         }
+        .test a {
+            width: 100%; /* Butonların genişliğini konteynerin genişliği kadar yap */
+            margin-bottom: 10px; /* İsteğe bağlı olarak butonlar arasına boşluk ekleyebilirsiniz */
         }
     </style>
 </head>
 <body>
 
 <div class="px-3 mx-3">
-    <h2>Artworks List</h2>
-    <a th:href="@{/artworks-list/showNewArtworkForm}" class="btn btn-primary btn-sm mb-3"> Add Artwork </a>
+    <h2>Sanat Eserleri | Kayıt Listesi</h2>
+    <a th:href="@{/artworks-list/showNewArtworkForm}" class="btn btn-primary btn-sm mb-3">Kayıt Ekle</a>
 </div>
 
 <div class="container-table">
     <div class="d-flex justify-content-center">
         <table class="table">
-            <thead>
+            <thead class="thead-dark">
             <tr>
                 <th>ID</th>
-                <th>Title</th>
-                <th>Description</th>
-                <th>Content</th>
-                <th>CreateDate</th>
-                <th>ModifiedDate</th>
-                <th>Files</th>
-                <th>Actions</th>
+                <th>Başlık</th>
+                <th>Açıklama</th>
+                <th>İçerik</th>
+                <th>Oluşturulma Tarihi</th>
+                <th>Güncelleme Tarihi</th>
+                <th>Dosyalar</th>
+                <th>İşlemler</th>
             </tr>
             </thead>
             <tbody>
             <tr th:each="artwork : ${listArtworks}">
-                <td th:text="${artwork.id}">Artwork ID</td>
-                <td th:text="${artwork.title}">Artwork Title</td>
-                <td th:text="${artwork.description}">Artwork Description</td>
+                <td th:text="${artwork.id}">ID</td>
+                <td th:text="${artwork.title}">Başlık</td>
+                <td th:text="${artwork.description}">Açıklama</td>
                 <td>
                     <div>
-                        <p th:text="${artwork.content}"> Artwork content</p>
+                        <p th:text="${artwork.content}">İçerik</p>
                     </div>
                 </td>
 
-                <td th:text="${artwork.getFormattedDate(artwork.createDate)}">Artwork CreateDate</td>
-                <td th:text="${artwork.getFormattedDate(artwork.modifiedDate)}">Artwork ModifiedDate</td>
+                <td th:text="${artwork.getFormattedDate(artwork.createDate)}">Oluşturulma Tarihi</td>
+                <td th:text="${artwork.getFormattedDate(artwork.modifiedDate)}">Güncelleme Tarihi</td>
                 <td>
                     <div th:if="${artwork.fileData != null and artwork.fileData.size() > 0}">
                         <img th:src="${'/files/' + artwork.fileData[0].name}" alt="Artwork Image" height="80px"
                              width="200px"/>
                     </div>
                     <div th:unless="${artwork.fileData != null and artwork.fileData.size() > 0}">
-                        <p>No image available</p>
+                        <p>Ekli fotoğraf bulunmamaktadır.</p>
                     </div>
                 </td>
                 <td>
-                    <a th:href="@{/artworks-list/showFormForUpdate/{id}(id=${artwork.id})}" class="btn btn-primary">Update</a>
-                    <a th:href="@{/artworks-list/updateArtworkImages/{id}(id=${artwork.id})}" class="btn btn-primary">Resim Guncelle</a>
-                    <a th:href="@{/artworks-list/deleteArtwork/{id}(id=${artwork.id})}"
-                       class="btn btn-primary">Delete</a>
+                    <div class="test">
+                        <a th:href="@{/artworks-list/showFormForUpdate/{id}(id=${artwork.id})}" class="btn btn-primary mb-1">Kaydı Güncelle</a>
+                        <a th:href="@{/artworks-list/updateArtworkImages/{id}(id=${artwork.id})}" class="btn btn-success mb-1">Galeri Yönetimi</a>
+                        <a th:href="@{/artworks-list/deleteArtwork/{id}(id=${artwork.id})}" class="btn btn-danger">Kaydı Sil</a>
+                    </div>
                 </td>
 
             </tr>
@@ -96,15 +108,15 @@
     <div th:if="${totalPages > 1}" class="d-flex justify-content-center pb-3">
         <div>
             <a th:if="${currentPage > 1}" th:href="@{'/artworks-list/page/' + ${currentPage - 1}}"
-               class="btn btn-dark mr-1">Previous</a>
+               class="btn btn-dark mr-1">Önceki</a>
             <span th:each="i: ${#numbers.sequence(1, totalPages)}">
                 <a th:if="${currentPage != i}" th:href="@{'/artworks-list/page/' + ${i}}" class="btn btn-secondary mr-1">[[${i}]]</a>
                 <span th:unless="${currentPage != i}" class="btn btn-primary mr-1">[[${i}]]</span>
             </span>
             <a th:if="${currentPage < totalPages}" th:href="@{'/artworks-list/page/' + ${currentPage + 1}}"
-               class="btn btn-dark mr-1">Next</a>
+               class="btn btn-dark mr-1">Sonraki</a>
             <a th:if="${currentPage < totalPages}" th:href="@{'/artworks-list/page/' + ${totalPages}}"
-               class="btn btn-dark">Last</a>
+               class="btn btn-dark">Son</a>
         </div>
     </div>
 </div>
