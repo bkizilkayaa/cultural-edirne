@@ -1,0 +1,44 @@
+.gallery-label {
+    text-align: center;
+    color: darkblue;
+    font-size: 48px;
+    align-content: center;
+}
+.text-label{
+    color: darkblue;
+    font-size: 24px;
+}
+th {
+     width: 10%;
+     border: 1px solid #dddddd;
+     text-align: left;
+     padding: 8px;
+     white-space: nowrap;
+     overflow-y: auto;
+     word-break: break-all;
+     background-color: #655b5b;
+}
+td{
+    width: 10%;
+    text-align: left;
+    overflow-y: auto;
+    word-break: break-all;
+}
+tr p {
+    display: block;
+    max-height: 220px !important;
+    overflow: hidden;
+}
+.container-table {
+    margin: 0 auto;
+    width: 99%;
+}
+.test{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.test a {
+    width: 100%;
+    margin-bottom: 10px;
+}

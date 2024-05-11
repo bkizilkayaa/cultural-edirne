@@ -4,49 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <title>Artworks List</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <style>
-        th {
-            width: 10%;
-            border: 1px solid #dddddd;
-            text-align: left;
-            padding: 8px;
-            white-space: pre-wrap;
-            overflow-y: auto;
-            word-break: break-all;
-        }
-        td{
-            width: 10%;
-            border: 1px solid #dddddd;
-            text-align: left;
-            padding: 5px;
-            overflow-y: auto;
-            word-break: break-all;
-        }
-        tr p {
-            display: block;
-            max-height: 220px !important;
-            overflow: hidden;
-        }
-
-        th {
-            background-color: #655b5b;
-        }
-
-        .container-table {
-            margin: 0 auto;
-            width: 99%;
-        }
-        .test{
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-         }
-        .test a {
-            width: 100%; /* Butonların genişliğini konteynerin genişliği kadar yap */
-            margin-bottom: 10px; /* İsteğe bağlı olarak butonlar arasına boşluk ekleyebilirsiniz */
-        }
-    </style>
+    <link rel="stylesheet" href="/webjars/bootstrap/4.5.2/css/bootstrap.css">
+    <!-- Özel CSS -->
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
 
@@ -57,7 +17,7 @@
 
 <div class="container-table">
     <div class="d-flex justify-content-center">
-        <table class="table">
+        <table class="table table-striped table-bordered">
             <thead class="thead-dark">
             <tr>
                 <th>ID</th>
@@ -81,25 +41,30 @@
                     </div>
                 </td>
 
-                <td th:text="${artwork.getFormattedDate(artwork.createDate)}">Oluşturulma Tarihi</td>
-                <td th:text="${artwork.getFormattedDate(artwork.modifiedDate)}">Güncelleme Tarihi</td>
+                <td th:text="${artwork.getFormattedDate(artwork.createDate)}" style="white-space: nowrap;">Oluşturulma Tarihi</td>
+                <td th:text="${artwork.getFormattedDate(artwork.modifiedDate)}" style="white-space: nowrap;">Güncelleme Tarihi</td>
                 <td>
                     <div th:if="${artwork.fileData != null and artwork.fileData.size() > 0}">
                         <img th:src="${'/files/' + artwork.fileData[0].name}" alt="Artwork Image" height="80px"
                              width="200px"/>
                     </div>
-                    <div th:unless="${artwork.fileData != null and artwork.fileData.size() > 0}">
+                    <div th:unless="${artwork.fileData != null and artwork.fileData.size() > 0}" style="white-space: nowrap;">
                         <p>Ekli fotoğraf bulunmamaktadır.</p>
                     </div>
                 </td>
                 <td>
-                    <div class="test">
-                        <a th:href="@{/artworks-list/showFormForUpdate/{id}(id=${artwork.id})}" class="btn btn-primary mb-1">Kaydı Güncelle</a>
-                        <a th:href="@{/artworks-list/updateArtworkImages/{id}(id=${artwork.id})}" class="btn btn-success mb-1">Galeri Yönetimi</a>
-                        <a th:href="@{/artworks-list/deleteArtwork/{id}(id=${artwork.id})}" class="btn btn-danger">Kaydı Sil</a>
+                    <div class="d-flex">
+                        <a th:href="@{/artworks-list/showFormForUpdate/{id}(id=${artwork.id})}" class="btn mb-1">
+                            <img src="/files/edit.png" style="width: 50px" height="50px"/>
+                        </a>
+                        <a th:href="@{/artworks-list/updateArtworkImages/{id}(id=${artwork.id})}" class="btn mb-1">
+                            <img src="/files/gallery.png" style="width: 50px" height="50px"/>
+                        </a>
+                        <a th:href="@{/artworks-list/deleteArtwork/{id}(id=${artwork.id})}" class="btn" onclick="deleteRecord(this)">
+                            <img src="/files/delete.jpg" style="width: 50px" height="50px"/>
+                        </a>
                     </div>
                 </td>
-
             </tr>
             </tbody>
         </table>
@@ -120,6 +85,12 @@
         </div>
     </div>
 </div>
-
+<script>
+    function deleteRecord(button) {
+        if (confirm("Kaydı silmek istediginize emin misiniz?")) {
+            window.location.href = button.getAttribute('href');
+        }
+    }
+</script>
 </body>
 </html>
