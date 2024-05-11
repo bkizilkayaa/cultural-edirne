@@ -42,7 +42,7 @@ public class PanelArtworkController {
     @PostMapping("/saveArtwork")
     public String saveArtworkPanel(@ModelAttribute("artwork") ArtworkCreateDTO model) {
         model.setModifiedDate(LocalDateTime.now());
-        artworkService.addArtwork(model);
+        artworkService.updateArtwork(model.getId(), model);
         return "redirect:/artworks-list";
     }
 
