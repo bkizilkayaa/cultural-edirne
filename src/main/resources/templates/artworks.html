@@ -10,12 +10,21 @@
 </head>
 <body>
 
-<div class="px-3 mx-3">
-    <h2>Sanat Eserleri | Kayıt Listesi</h2>
-    <a th:href="@{/artworks-list/showNewArtworkForm}" class="btn btn-primary btn-sm mb-3">Kayıt Ekle</a>
+<div class="mx-2 px-2 d-flex justify-content-center align-items-center">
+    <h2 class="py-2 my-2">Sanat Eserleri | Yönetim Sistemi</h2>
 </div>
 
 <div class="container-table">
+    <div class="container-table">
+        <div class="row">
+            <div class="col">
+                <h2 class="mt-2">Kayıt Listesi</h2>
+            </div>
+            <div class="col text-right">
+                <a th:href="@{/artworks-list/showNewArtworkForm}" class="btn-lg btn-success mb-3 font-weight-bold">Kayıt Ekle</a>
+            </div>
+        </div>
+
     <div class="d-flex justify-content-center">
         <table class="table table-striped table-bordered">
             <thead class="thead-dark">

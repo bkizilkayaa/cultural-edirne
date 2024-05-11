@@ -9,23 +9,23 @@
 </head>
 <body>
 <div class="container">
-  <h1>Artwork Management System</h1>
+  <h1>Sanat Eseri Yönetimi </h1>
   <hr>
-  <h2>Save Artwork</h2>
+  <h2 class="mx-3">Sanat Eseri Bilgilerini Giriniz: </h2>
 
   <form action="#" th:action="@{/artworks-list/addArtwork}" th:object="${artwork}" method="POST">
-    <input type="text" th:field="*{title}" placeholder="Artwork Title" class="form-control mb-4 col-4">
+    <input type="text" th:field="*{title}" placeholder="Sanat Eseri Başlığı" class="form-control mb-4 col-4">
 
-    <input type="text" th:field="*{description}" placeholder="Artwork Description" class="form-control mb-4 col-4">
+    <input type="text" th:field="*{description}" placeholder="Sanat Eseri Kısa Açıklaması" class="form-control mb-4 col-4">
 
-    <input type="text" th:field="*{content}" placeholder="Artwork content" class="form-control mb-4 col-4">
+    <input type="text" th:field="*{content}" placeholder="Sanat Eseri İçeriği" class="form-control mb-4 col-4">
 
-    <button type="submit" class="btn btn-info col-2"> Save Artwork</button>
+    <button type="submit" class="btn btn-success col-2">Kaydet</button>
   </form>
 
   <hr>
 
-  <a th:href="@{/artworks-list}"> Back to Artwork List</a>
+  <a th:href="@{/artworks-list}">Kayıt listesine geri dön</a>
 </div>
 </body>
 </html>
