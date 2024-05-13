@@ -8,25 +8,25 @@
     <!-- Özel CSS -->
     <link rel="stylesheet" href="/css/style.css">
 </head>
-<body>
+<body class="background-style">
 
 <div class="mx-2 px-2 d-flex justify-content-center align-items-center">
-    <h2 class="py-2 my-2">Sanat Eserleri | Yönetim Sistemi</h2>
+    <h2 class="py-2 my-2 baslik">Sanat Eserleri | Yönetim Sistemi</h2>
 </div>
 
 <div class="container-table">
     <div class="container-table">
-        <div class="row">
-            <div class="col">
-                <h2 class="mt-2">Kayıt Listesi</h2>
+        <div class="row mb-3">
+            <div class="col-md-6 text-left">
+                <h2 class="mt-2 baslik">Kayıt Listesi</h2>
             </div>
-            <div class="col text-right">
-                <a th:href="@{/artworks-list/showNewArtworkForm}" class="btn-lg btn-success mb-3 font-weight-bold">Kayıt Ekle</a>
+            <div class="col-md-6 text-right">
+                <a th:href="@{/artworks-list/showNewArtworkForm}" class="btn-lg btn-primary font-weight-bold">Kayıt Ekle</a>
             </div>
         </div>
 
     <div class="d-flex justify-content-center">
-        <table class="table table-striped table-bordered">
+        <table class="table table-striped table-bordered table-responsive table-dark table-hover">
             <thead class="thead-dark">
             <tr>
                 <th>ID</th>
@@ -58,19 +58,19 @@
                              width="200px"/>
                     </div>
                     <div th:unless="${artwork.fileData != null and artwork.fileData.size() > 0}" style="white-space: nowrap;">
-                        <p>Ekli fotoğraf bulunmamaktadır.</p>
+                        <p>Görsel eklenmemiş.</p>
                     </div>
                 </td>
                 <td>
                     <div class="d-flex">
                         <a th:href="@{/artworks-list/showFormForUpdate/{id}(id=${artwork.id})}" class="btn mb-1">
-                            <img src="/files/edit.png" style="width: 50px" height="50px"/>
+                            <img src="/logo/edit.png" style="width: 50px" height="49px"/>
                         </a>
                         <a th:href="@{/artworks-list/updateArtworkImages/{id}(id=${artwork.id})}" class="btn mb-1">
-                            <img src="/files/gallery.png" style="width: 50px" height="50px"/>
+                            <img src="/logo/gallery.png" style="width: 50px" height="49px"/>
                         </a>
                         <a th:href="@{/artworks-list/deleteArtwork/{id}(id=${artwork.id})}" class="btn" onclick="deleteRecord(this)">
-                            <img src="/files/delete.jpg" style="width: 50px" height="50px"/>
+                            <img src="/logo/delete.jpg" style="width: 50px" height="49px"/>
                         </a>
                     </div>
                 </td>
@@ -94,11 +94,14 @@
         </div>
     </div>
 </div>
+</div>
 <script>
     function deleteRecord(button) {
-        if (confirm("Kaydı silmek istediginize emin misiniz?")) {
-            window.location.href = button.getAttribute('href');
+        var result = confirm("Kaydı silmek istediğinize emin misiniz?");
+        if (!result) {
+            event.preventDefault();
         }
+        return result;
     }
 </script>
 </body>

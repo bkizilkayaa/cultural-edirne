@@ -6,21 +6,22 @@
     <link rel="stylesheet" href="/webjars/bootstrap/4.5.2/css/bootstrap.css"/>
     <!-- Özel CSS -->
     <link rel="stylesheet" href="/css/style.css">
+    <script src="/js/script.js"></script>
 </head>
-<body>
+<body class="background-style">
 <div class="container">
-    <h1>Sanat Eseri Yönetimi</h1>
+    <h1 class="baslik">Sanat Eseri Yönetimi</h1>
     <hr>
-    <h2>Kayıt Bilgileri</h2>
-
-    <form action="#" th:action="@{/artworks-list/saveArtwork}" th:object="${artwork}" method="POST">
+    <h2 class="baslik">Kayıt Bilgileri</h2>
+    <hr>
+    <form action="#" th:action="@{/artworks-list/saveArtwork}" th:object="${artwork}" method="POST" onsubmit="onSubmitForm()">
 
         <input type="hidden" th:field="*{id}"/>
 
         <div class="form-group row">
             <label for="title" class="col-sm-2 col-form-label text-label">Başlık:</label>
             <div class="col-sm-10">
-                <input type="text" th:field="*{title}" id="title" class="form-control mb-4">
+                <input type="text" th:field="*{title}" id="title" class="form-control mb-4 col-6">
             </div>
         </div>
 
@@ -41,23 +42,23 @@
         <div class="form-group row">
             <label for="createDate" class="col-sm-2 col-form-label text-label">Eklendiği Tarih:</label>
             <div class="col-sm-10">
-                <input type="text" th:field="*{createDate}" id="createDate" class="form-control mb-4" disabled>
+                <input type="text" th:field="*{createDate}" id="createDate" class="form-control mb-4 col-3" disabled>
             </div>
         </div>
 
         <div class="form-group row">
             <label for="modifiedDate" class="col-sm-2 col-form-label text-label">Son Güncelleme:</label>
             <div class="col-sm-10">
-                <input type="text" th:field="*{modifiedDate}" id="modifiedDate" class="form-control mb-4" disabled>
+                <input type="text" th:field="*{modifiedDate}" id="modifiedDate" class="form-control mb-4 col-3" disabled>
             </div>
         </div>
-
+<hr>
         <div class="row">
             <div class="col-sm-6 text-right">
-                <button type="submit" class="btn btn-info col-12 mb-3">Kaydı Güncelle</button>
+                <button type="submit" class="btn btn-info col-12 mb-3 text-label">Kaydı Güncelle</button>
             </div>
             <div class="col-sm-6 text-right">
-                <a th:href="@{'/artworks-list/updateArtworkImages/' + ${artwork.id}}" class="btn btn-dark col-12 mb-3">Fotoğraf Galerisi Yönetimi</a>
+                <a th:href="@{'/artworks-list/updateArtworkImages/' + ${artwork.id}}" class="btn btn-secondary col-12 mb-3 text-label">Fotoğraf Galerisi Yönetimi</a>
             </div>
         </div>
     </form>

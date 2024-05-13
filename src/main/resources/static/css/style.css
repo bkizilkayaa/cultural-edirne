@@ -1,12 +1,12 @@
 .gallery-label {
     text-align: center;
-    color: darkblue;
+    color: white;
     font-size: 48px;
     align-content: center;
 }
 .text-label{
-    color: darkblue;
-    font-size: 24px;
+    color: white;
+    font-size: 20px;
 }
 th {
      width: 10%;
@@ -32,6 +32,7 @@ tr p {
 .container-table {
     margin: 0 auto;
     width: 99%;
+    padding: 1px;
 }
 .test{
     display: flex;
@@ -48,4 +49,10 @@ tr p {
     max-width: 850px;
     display: flex;
     object-fit: cover;
+}
+.baslik{
+    color: white;
+}
+.background-style{
+    background-color: rgba(54, 64, 75, 1)!important;
 }
