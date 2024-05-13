@@ -50,6 +50,12 @@ public class FileDataServiceImpl implements StorageService {
         String fileName = pathService.generateFileName(multiPartFile);
         String basePath = System.getProperty("user.dir") + FOLDER_PATH;
 
+        // Klasörü kontrol et ve yoksa oluştur
+        File folder = new File(basePath);
+        if (!folder.exists()) {
+            boolean mkdirs = folder.mkdirs();
+        }
+
         Long fileId = saveFileDataToDatabase(multiPartFile, fileName);
 
         File file = new File(basePath, fileName);
