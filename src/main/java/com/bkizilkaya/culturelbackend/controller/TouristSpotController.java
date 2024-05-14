@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.NO_CONTENT;
 import static org.springframework.http.HttpStatus.OK;
 
 @RestController
@@ -71,13 +72,13 @@ public class TouristSpotController {
     @DeleteMapping("/{spotId}")
     public ResponseEntity<Void> deleteSpot(@PathVariable Long spotId) {
         touristSpotService.deleteSpot(spotId);
-        return new ResponseEntity<>(OK);
+        return new ResponseEntity<>(NO_CONTENT);
     }
 
     @DeleteMapping("/{spotId}/images/{imageId}")
     public ResponseEntity<String> removeSpotImageFromSpot(@PathVariable Long spotId, @PathVariable Long imageId) {
         touristSpotService.removeSpotImageFromSpot(spotId, imageId);
-        return ResponseEntity.status(OK).body("Spot image removed from spot successfully");
+        return ResponseEntity.status(NO_CONTENT).body("Spot image removed from spot successfully");
     }
 
 }

@@ -24,7 +24,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(value = {ValidationException.class})
     public ResponseEntity<CustomErrorResponse> handleCustomException(ValidationException ex) {
-        CustomErrorResponse errorResponse =  customErrorResponseBuilder(BAD_REQUEST, ex.getMessage());
+        CustomErrorResponse errorResponse = customErrorResponseBuilder(BAD_REQUEST, ex.getMessage());
         return new ResponseEntity<>(errorResponse, BAD_REQUEST);
     }
 
@@ -34,8 +34,8 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorResponse, NOT_FOUND);
     }
 
-    private CustomErrorResponse customErrorResponseBuilder(HttpStatus status, String exceptionMessage){
-        return  CustomErrorResponse.builder()
+    private CustomErrorResponse customErrorResponseBuilder(HttpStatus status, String exceptionMessage) {
+        return CustomErrorResponse.builder()
                 .timestamp(LocalDateTime.now())
                 .status(status.value())
                 .error(status.getReasonPhrase())

@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.NO_CONTENT;
 import static org.springframework.http.HttpStatus.OK;
 
 @RestController
@@ -71,13 +72,13 @@ public class ArtworkController {
     @DeleteMapping("/{artworkId}")
     public ResponseEntity<Void> deleteArtwork(@PathVariable Long artworkId) {
         artworkService.deleteArtwork(artworkId);
-        return new ResponseEntity<>(OK);
+        return new ResponseEntity<>(NO_CONTENT);
     }
 
     @DeleteMapping("/{artworkId}/images/{imageId}")
     public ResponseEntity<String> removeArtworkImageFromArtwork(@PathVariable Long artworkId, @PathVariable Long imageId) {
         artworkService.removeArtworkImageFromArtwork(artworkId, imageId);
-        return ResponseEntity.status(OK).body("Artwork image removed from artwork successfully");
+        return ResponseEntity.status(NO_CONTENT).body("Artwork image removed from artwork successfully");
     }
 
 }

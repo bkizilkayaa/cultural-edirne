@@ -47,6 +47,6 @@ public class FileController {
     @DeleteMapping("/{fileId}")
     public ResponseEntity<String> deleteFile(@PathVariable Long fileId) {
         storageService.deleteFile(fileId);
-        return new ResponseEntity<>("file deleted", HttpStatus.OK);
+        return new ResponseEntity<>("file deleted", HttpStatus.NO_CONTENT);
     }
 }

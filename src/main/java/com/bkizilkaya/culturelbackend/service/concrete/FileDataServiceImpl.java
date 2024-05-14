@@ -90,19 +90,10 @@ public class FileDataServiceImpl implements StorageService {
                 .orElseThrow(() -> new NotFoundException(FileData.class, fileName));
     }
 
-    protected FileData findById(Long fileId) {
-        return fileDataRepository.findById(fileId)
-                .orElseThrow(() -> new NotFoundException(FileData.class));
-    }
-
     @Override
     public void deleteFile(Long fileId) {
         FileData fileDataFromDb = findById(fileId);
-        if (fileDataFromDb != null) {
-            fileDataRepository.deleteById(fileId);
-        } else {
-            throw new NotFoundException(FileData.class);
-        }
+        fileDataRepository.deleteById(fileId);
     }
 
     @Override
@@ -113,6 +104,11 @@ public class FileDataServiceImpl implements StorageService {
     @Override
     public List<String> findUnusedFilesName() {
         return fileDataRepository.findUnusedFilesName().orElseThrow(() -> new RuntimeException("an error occured when fetching data from db"));
+    }
+
+    protected FileData findById(Long fileId) {
+        return fileDataRepository.findById(fileId)
+                .orElseThrow(() -> new NotFoundException(FileData.class));
     }
 
 }
