@@ -4,6 +4,7 @@ import com.bkizilkaya.culturelbackend.exception.CustomErrorResponse;
 import com.bkizilkaya.culturelbackend.exception.NotFoundException;
 import com.bkizilkaya.culturelbackend.exception.ValidationException;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -23,23 +24,22 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(value = {ValidationException.class})
     public ResponseEntity<CustomErrorResponse> handleCustomException(ValidationException ex) {
-        CustomErrorResponse errorResponse = CustomErrorResponse.builder()
-                .timestamp(LocalDateTime.now())
-                .status(BAD_REQUEST.value())
-                .error(BAD_REQUEST.getReasonPhrase())
-                .message(ex.getMessage())
-                .path(request.getRequestURI()).build();
+        CustomErrorResponse errorResponse =  customErrorResponseBuilder(BAD_REQUEST, ex.getMessage());
         return new ResponseEntity<>(errorResponse, BAD_REQUEST);
     }
 
     @ExceptionHandler(value = {NotFoundException.class})
     public ResponseEntity<CustomErrorResponse> handleCustomException(NotFoundException ex) {
-        CustomErrorResponse errorResponse = CustomErrorResponse.builder()
-                .timestamp(LocalDateTime.now())
-                .status(NOT_FOUND.value())
-                .error(NOT_FOUND.getReasonPhrase())
-                .message(ex.getMessage())
-                .path(request.getRequestURI()).build();
+        CustomErrorResponse errorResponse = customErrorResponseBuilder(NOT_FOUND, ex.getMessage());
         return new ResponseEntity<>(errorResponse, NOT_FOUND);
+    }
+
+    private CustomErrorResponse customErrorResponseBuilder(HttpStatus status, String exceptionMessage){
+        return  CustomErrorResponse.builder()
+                .timestamp(LocalDateTime.now())
+                .status(status.value())
+                .error(status.getReasonPhrase())
+                .message(exceptionMessage)
+                .path(this.request.getRequestURI()).build();
     }
 }
