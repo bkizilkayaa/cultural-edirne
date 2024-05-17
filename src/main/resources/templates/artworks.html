@@ -13,6 +13,9 @@
 <div class="mx-2 px-2 d-flex justify-content-center align-items-center">
     <h2 class="py-2 my-2 baslik">Sanat Eserleri | Yönetim Sistemi</h2>
 </div>
+<div th:if="${successMessage}" class="alert alert-success success-message" role="alert" id="success-message">
+    <span th:text="${successMessage}"></span>
+</div>
 
 <div class="container-table">
     <div class="container-table">
@@ -103,6 +106,17 @@
         }
         return result;
     }
+    window.onload = function() {
+        var messageBox = document.getElementById('success-message');
+        if (messageBox) {
+            setTimeout(function() {
+                messageBox.style.opacity = '0';
+                setTimeout(function() {
+                    messageBox.style.display = 'none';
+                }, 1000);
+            }, 3000);
+        }
+    };
 </script>
 </body>
 </html>

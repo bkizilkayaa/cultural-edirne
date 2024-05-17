@@ -56,3 +56,11 @@ tr p {
 .background-style{
     background-color: rgba(54, 64, 75, 1)!important;
 }
+.success-message {
+    transition: opacity 1s ease-out;
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 50px;
+    opacity: 1;
+}

@@ -35,8 +35,9 @@ public class ArtworkResponseDTO {
     private Long parentId;
     private ZipCode zipCode;
     private List<FileDataResponseDTO> fileData;
+
     public String getFormattedDate(LocalDateTime ldt) {
-        if(ldt!=null){
+        if (ldt != null) {
             return ldt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         }
         return "-";
