@@ -8,7 +8,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,8 +15,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Controller
@@ -41,8 +40,9 @@ public class PanelArtworkController {
     }
 
     @PostMapping("/saveArtwork")
-    public String saveArtworkPanel(@ModelAttribute("artwork") ArtworkCreateDTO model) {
+    public String saveArtworkPanel(@ModelAttribute("artwork") ArtworkCreateDTO model, RedirectAttributes redirectAttributes) {
         artworkService.updateArtwork(model.getId(), model);
+        redirectAttributes.addFlashAttribute("successMessage", "Kayıt başarıyla güncellendi!");
         return "redirect:/artworks-list";
     }
 
@@ -81,11 +81,12 @@ public class PanelArtworkController {
     }
 
     @GetMapping("/{artworkId}/deleteImage/{fileId}")
-    public String deleteImage(@PathVariable("artworkId") Long artworkId, @PathVariable("fileId") Long fileId) {
+    public String deleteImage(@PathVariable("artworkId") Long artworkId, @PathVariable("fileId") Long fileId, Model model) {
         try {
             artworkService.removeArtworkImageFromArtwork(artworkId, fileId);
             return "redirect:/artworks-list/showFormForUpdate/" + artworkId;
         } catch (Exception e) {
+            model.addAttribute("errorMessage", e.getMessage());
             return "error";
         }
     }
@@ -99,37 +100,29 @@ public class PanelArtworkController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error creating image: " + e.getMessage());
         }
     }
+
     @GetMapping("/updateArtworkImages/{id}")
     public String updateArtworkImages(@PathVariable(value = "id") Long id, Model model) {
         try {
-            // ArtworkService'e yeni bir metod ekleyin:
-            // void updateArtworkImages(Long artworkId, MultipartFile file)
-            // Bu metod, artwork'e yeni bir resim eklemeli ve veritabanına kaydetmelidir.
-            //artworkService.addImageToArtwork(model.getId(), file);
             ArtworkResponseDTO artworkResponseDTO = artworkService.getArtworkGivenId(id);
 
             model.addAttribute("artwork", artworkResponseDTO);
             return "update_image_artwork";
         } catch (Exception e) {
-            // Hata durumunda gerekli işlemleri yapabilirsiniz, örneğin:
-            // model.addAttribute("error", e.getMessage());
+            model.addAttribute("errorMessage", e.getMessage());
             return "error";
         }
     }
+
     @PostMapping("/updateArtworkImages/{id}/addImages")
     public String updateAddImagesToArtwork(@PathVariable(value = "id") Long id, Model model, MultipartFile multipartFile) {
         try {
-            // ArtworkService'e yeni bir metod ekleyin:
-            // void updateArtworkImages(Long artworkId, MultipartFile file)
-            // Bu metod, artwork'e yeni bir resim eklemeli ve veritabanına kaydetmelidir.
-            //artworkService.addImageToArtwork(model.getId(), file);
             ArtworkResponseDTO artworkResponseDTO = artworkService.getArtworkGivenId(id);
             artworkService.addImageToArtwork(id, multipartFile);
             model.addAttribute("artwork", artworkResponseDTO);
-            return "redirect:/artworks-list/showFormForUpdate/"+id;
+            return "redirect:/artworks-list/showFormForUpdate/" + id;
         } catch (Exception e) {
-            // Hata durumunda gerekli işlemleri yapabilirsiniz, örneğin:
-            // model.addAttribute("error", e.getMessage());
+            model.addAttribute("errorMessage", e.getMessage());
             return "error";
         }
     }
