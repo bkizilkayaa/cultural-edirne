@@ -4,8 +4,10 @@ import com.bkizilkaya.culturelbackend.dto.artwork.request.ArtworkCreateDTO;
 import com.bkizilkaya.culturelbackend.dto.artwork.response.ArtworkResponseDTO;
 import com.bkizilkaya.culturelbackend.exception.NotFoundException;
 import com.bkizilkaya.culturelbackend.mapper.ArtworkMapper;
+import com.bkizilkaya.culturelbackend.model.ActionEnum;
 import com.bkizilkaya.culturelbackend.model.Artwork;
 import com.bkizilkaya.culturelbackend.model.FileData;
+import com.bkizilkaya.culturelbackend.model.TableName;
 import com.bkizilkaya.culturelbackend.repo.ArtworkRepository;
 import com.bkizilkaya.culturelbackend.service.abstraction.ArtworkService;
 import jakarta.transaction.Transactional;
@@ -25,11 +27,13 @@ import java.util.stream.Collectors;
 public class ArtworkServiceImpl implements ArtworkService {
     private final ArtworkRepository artworkRepository;
     private final FileDataServiceImpl fileDataService;
+    private final ActionLogServiceImpl actionLogService;
 
 
-    public ArtworkServiceImpl(ArtworkRepository artworkRepository, FileDataServiceImpl fileDataService) {
+    public ArtworkServiceImpl(ArtworkRepository artworkRepository, FileDataServiceImpl fileDataService, ActionLogServiceImpl actionLogService) {
         this.artworkRepository = artworkRepository;
         this.fileDataService = fileDataService;
+        this.actionLogService = actionLogService;
     }
 
     @Override
@@ -47,6 +51,7 @@ public class ArtworkServiceImpl implements ArtworkService {
 
         Artwork artwork = ArtworkMapper.INSTANCE.dtoToEntity(artworkCreateDTO);
         artworkRepository.save(artwork);
+        actionLogService.createLog(ActionEnum.ADD, TableName.ARTWORKS);
         return ArtworkMapper.INSTANCE.artworkToResponseDto(artwork);
     }
 
@@ -59,15 +64,10 @@ public class ArtworkServiceImpl implements ArtworkService {
     @Override
     public ArtworkResponseDTO updateArtwork(Long id, ArtworkCreateDTO artworkCreateDTO) {
         Artwork artworkFromDb = getArtworkById(id);
-
-        artworkFromDb.setTitle(artworkCreateDTO.getTitle());
-        artworkFromDb.setDescription(artworkCreateDTO.getDescription());
-        artworkFromDb.setContent(artworkCreateDTO.getContent());
-        artworkFromDb.setAuthorId(artworkCreateDTO.getAuthorId());
-        artworkFromDb.setParentId(artworkCreateDTO.getParentId());
-        artworkFromDb.setModifiedDate(LocalDateTime.now());
+        updateArtworkField(artworkCreateDTO, artworkFromDb);
 
         artworkRepository.save(artworkFromDb);
+        actionLogService.createLog(ActionEnum.UPDATE, TableName.ARTWORKS);
         return ArtworkMapper.INSTANCE.artworkToResponseDto(artworkFromDb);
     }
 
@@ -75,6 +75,7 @@ public class ArtworkServiceImpl implements ArtworkService {
     public void deleteArtwork(Long id) {
         Artwork artworkFromDb = getArtworkById(id);
         artworkRepository.deleteById(id);
+        actionLogService.createLog(ActionEnum.DELETE, TableName.ARTWORKS);
     }
 
     @Transactional
@@ -84,9 +85,9 @@ public class ArtworkServiceImpl implements ArtworkService {
             FileData fileData = fileDataService.findById(fileId);
             Artwork artwork = getArtworkById(artworkId);
 
-
             fileData.setArtworkImages(artwork);
             artwork.getFileData().add(fileData);
+            actionLogService.createLog(ActionEnum.ADD, TableName.ARTWORK_IMAGES);
         } catch (IOException e) {
             throw new RuntimeException(e.getMessage());
         }
@@ -98,7 +99,7 @@ public class ArtworkServiceImpl implements ArtworkService {
     public void removeArtworkImageFromArtwork(Long artworkId, Long imageId) {
         Artwork artwork = getArtworkById(artworkId);
         FileData fileDataFromDb = fileDataService.findById(imageId);
-        if (artwork.getFileData().stream().noneMatch(fileData -> fileData.getId().equals(imageId))) {
+        if (isArtworkHaveNoImageWithGivenImageId(imageId, artwork)) {
             throw new NotFoundException(FileData.class);
         } else {
             artwork.setFileData(artwork.getFileData()
@@ -108,6 +109,11 @@ public class ArtworkServiceImpl implements ArtworkService {
 
             fileDataFromDb.setArtworkImages(null);
         }
+        actionLogService.createLog(ActionEnum.DELETE, TableName.ARTWORK_IMAGES);
+    }
+
+    private boolean isArtworkHaveNoImageWithGivenImageId(Long imageId, Artwork artwork) {
+        return artwork.getFileData().stream().noneMatch(fileData -> fileData.getId().equals(imageId));
     }
 
     @Override
@@ -117,7 +123,18 @@ public class ArtworkServiceImpl implements ArtworkService {
     }
 
     protected Artwork getArtworkById(Long artworkId) {
-        return artworkRepository.findById(artworkId)
+        Artwork artworkFromDb = artworkRepository.findById(artworkId)
                 .orElseThrow(() -> new NotFoundException(Artwork.class));
+        actionLogService.createLog(ActionEnum.GET, TableName.ARTWORKS);
+        return artworkFromDb;
+    }
+
+    private void updateArtworkField(ArtworkCreateDTO artworkCreateDTO, Artwork artworkFromDb) {
+        artworkFromDb.setTitle(artworkCreateDTO.getTitle());
+        artworkFromDb.setDescription(artworkCreateDTO.getDescription());
+        artworkFromDb.setContent(artworkCreateDTO.getContent());
+        artworkFromDb.setAuthorId(artworkCreateDTO.getAuthorId());
+        artworkFromDb.setParentId(artworkCreateDTO.getParentId());
+        artworkFromDb.setModifiedDate(LocalDateTime.now());
     }
 }
