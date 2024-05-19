@@ -7,7 +7,7 @@ import com.bkizilkaya.culturelbackend.mapper.ArtworkMapper;
 import com.bkizilkaya.culturelbackend.model.ActionEnum;
 import com.bkizilkaya.culturelbackend.model.Artwork;
 import com.bkizilkaya.culturelbackend.model.FileData;
-import com.bkizilkaya.culturelbackend.model.TableName;
+import com.bkizilkaya.culturelbackend.model.TableNameEnum;
 import com.bkizilkaya.culturelbackend.repo.ArtworkRepository;
 import com.bkizilkaya.culturelbackend.service.abstraction.ArtworkService;
 import jakarta.transaction.Transactional;
@@ -51,7 +51,7 @@ public class ArtworkServiceImpl implements ArtworkService {
 
         Artwork artwork = ArtworkMapper.INSTANCE.dtoToEntity(artworkCreateDTO);
         artworkRepository.save(artwork);
-        actionLogService.createLog(ActionEnum.ADD, TableName.ARTWORKS);
+        actionLogService.createLog(ActionEnum.ADD, TableNameEnum.ARTWORKS);
         return ArtworkMapper.INSTANCE.artworkToResponseDto(artwork);
     }
 
@@ -67,7 +67,7 @@ public class ArtworkServiceImpl implements ArtworkService {
         updateArtworkField(artworkCreateDTO, artworkFromDb);
 
         artworkRepository.save(artworkFromDb);
-        actionLogService.createLog(ActionEnum.UPDATE, TableName.ARTWORKS);
+        actionLogService.createLog(ActionEnum.UPDATE, TableNameEnum.ARTWORKS);
         return ArtworkMapper.INSTANCE.artworkToResponseDto(artworkFromDb);
     }
 
@@ -75,7 +75,7 @@ public class ArtworkServiceImpl implements ArtworkService {
     public void deleteArtwork(Long id) {
         Artwork artworkFromDb = getArtworkById(id);
         artworkRepository.deleteById(id);
-        actionLogService.createLog(ActionEnum.DELETE, TableName.ARTWORKS);
+        actionLogService.createLog(ActionEnum.DELETE, TableNameEnum.ARTWORKS);
     }
 
     @Transactional
@@ -87,7 +87,7 @@ public class ArtworkServiceImpl implements ArtworkService {
 
             fileData.setArtworkImages(artwork);
             artwork.getFileData().add(fileData);
-            actionLogService.createLog(ActionEnum.ADD, TableName.ARTWORK_IMAGES);
+            actionLogService.createLog(ActionEnum.ADD, TableNameEnum.ARTWORK_IMAGES);
         } catch (IOException e) {
             throw new RuntimeException(e.getMessage());
         }
@@ -109,7 +109,7 @@ public class ArtworkServiceImpl implements ArtworkService {
 
             fileDataFromDb.setArtworkImages(null);
         }
-        actionLogService.createLog(ActionEnum.DELETE, TableName.ARTWORK_IMAGES);
+        actionLogService.createLog(ActionEnum.DELETE, TableNameEnum.ARTWORK_IMAGES);
     }
 
     private boolean isArtworkHaveNoImageWithGivenImageId(Long imageId, Artwork artwork) {
@@ -125,7 +125,7 @@ public class ArtworkServiceImpl implements ArtworkService {
     protected Artwork getArtworkById(Long artworkId) {
         Artwork artworkFromDb = artworkRepository.findById(artworkId)
                 .orElseThrow(() -> new NotFoundException(Artwork.class));
-        actionLogService.createLog(ActionEnum.GET, TableName.ARTWORKS);
+        actionLogService.createLog(ActionEnum.GET, TableNameEnum.ARTWORKS);
         return artworkFromDb;
     }
 
