@@ -11,6 +11,8 @@ import com.bkizilkaya.culturelbackend.model.TableNameEnum;
 import com.bkizilkaya.culturelbackend.repo.ArtworkRepository;
 import com.bkizilkaya.culturelbackend.service.abstraction.ArtworkService;
 import jakarta.transaction.Transactional;
+import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -24,6 +26,7 @@ import java.util.stream.Collectors;
 
 
 @Service
+@Slf4j
 public class ArtworkServiceImpl implements ArtworkService {
     private final ArtworkRepository artworkRepository;
     private final FileDataServiceImpl fileDataService;
@@ -123,10 +126,10 @@ public class ArtworkServiceImpl implements ArtworkService {
     }
 
     protected Artwork getArtworkById(Long artworkId) {
-        Artwork artworkFromDb = artworkRepository.findById(artworkId)
-                .orElseThrow(() -> new NotFoundException(Artwork.class));
+        Artwork artworkFromDb = artworkRepository.findById(artworkId).orElseThrow(() -> new NotFoundException(Artwork.class));
         actionLogService.createLog(ActionEnum.GET, TableNameEnum.ARTWORKS);
         return artworkFromDb;
+
     }
 
     private void updateArtworkField(ArtworkCreateDTO artworkCreateDTO, Artwork artworkFromDb) {

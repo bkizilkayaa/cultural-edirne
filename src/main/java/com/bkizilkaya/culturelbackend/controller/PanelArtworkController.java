@@ -3,6 +3,7 @@ package com.bkizilkaya.culturelbackend.controller;
 import com.bkizilkaya.culturelbackend.dto.artwork.request.ArtworkCreateDTO;
 import com.bkizilkaya.culturelbackend.dto.artwork.response.ArtworkResponseDTO;
 import com.bkizilkaya.culturelbackend.service.abstraction.ArtworkService;
+import com.bkizilkaya.culturelbackend.utils.PaginationValidator;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,9 +24,11 @@ import java.util.List;
 @RequestMapping("/artworks-list")
 public class PanelArtworkController {
     private final ArtworkService artworkService;
+    private final PaginationValidator paginationValidator;
 
-    public PanelArtworkController(ArtworkService artworkService) {
+    public PanelArtworkController(ArtworkService artworkService, PaginationValidator paginationValidator) {
         this.artworkService = artworkService;
+        this.paginationValidator = paginationValidator;
     }
 
     @GetMapping()
@@ -71,15 +74,21 @@ public class PanelArtworkController {
 
     @GetMapping("/page/{pageNo}")
     public String findPaginated(@PathVariable(value = "pageNo") int pageNo, Model model) {
-        int pageSize = 5;
-        Page<ArtworkResponseDTO> page = artworkService.findPaginated(pageNo, pageSize);
-        List<ArtworkResponseDTO> listOfArtworks = page.getContent();
-
-        model.addAttribute("currentPage", pageNo);
-        model.addAttribute("totalPages", page.getTotalPages());
-        model.addAttribute("totalItems", page.getTotalElements());
-        model.addAttribute("listArtworks", listOfArtworks);
-        return "artworks";
+        try {
+            int pageSize = 5;
+            Page<ArtworkResponseDTO> page = artworkService.findPaginated(pageNo, pageSize);
+            paginationValidator.validatePageNumberIsExists(pageNo, page);
+            List<ArtworkResponseDTO> listOfArtworks = page.getContent();
+            model.addAttribute("currentPage", pageNo);
+            model.addAttribute("totalPages", page.getTotalPages());
+            model.addAttribute("totalItems", page.getTotalElements());
+            model.addAttribute("listArtworks", listOfArtworks);
+            return "artworks";
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", e.getMessage());
+            model.addAttribute("status", HttpStatus.BAD_REQUEST.value());
+            return "error";
+        }
     }
 
     @GetMapping("/{artworkId}/deleteImage/{fileId}")
@@ -94,12 +103,13 @@ public class PanelArtworkController {
     }
 
     @PostMapping("/{artworkId}/addImage")
-    public ResponseEntity<?> addImage(@PathVariable("artworkId") Long artworkId, @RequestParam("image") MultipartFile file) {
+    public String addImage(@PathVariable("artworkId") Long artworkId, @RequestParam("image") MultipartFile file, Model model) {
         try {
             artworkService.addImageToArtwork(artworkId, file);
-            return ResponseEntity.ok().body(true);
+            return "redirect:/artworks-list/showFormForUpdate/" + artworkId;
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error creating image: " + e.getMessage());
+            model.addAttribute("errorMessage", e.getMessage());
+            return "error";
         }
     }
 
@@ -112,6 +122,7 @@ public class PanelArtworkController {
             return "update_image_artwork";
         } catch (Exception e) {
             model.addAttribute("errorMessage", e.getMessage());
+            model.addAttribute("status", HttpStatus.NOT_FOUND.value());
             return "error";
         }
     }
