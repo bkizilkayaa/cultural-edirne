@@ -16,14 +16,15 @@ public class ActionLogServiceImpl implements ActionLogService {
     }
 
     @Override
-    public void createLog(ActionEnum actionEnum, TableNameEnum tableName) {
-        ActionLog action = actionLogBuilder(actionEnum, tableName.getTableName());
+    public void createLog(ActionEnum actionEnum, TableNameEnum tableName, String jsonObject) {
+        ActionLog action = actionLogBuilder(actionEnum, tableName.getTableName(), jsonObject);
         actionLogRepository.save(action);
     }
 
-    protected ActionLog actionLogBuilder(ActionEnum actionEnum, String tableName){
+    protected ActionLog actionLogBuilder(ActionEnum actionEnum, String tableName, String jsonObject){
         return ActionLog.builder().action(actionEnum.getAction())
                 .tableName(tableName)
+                .logDetail(jsonObject)
                 //.user() bu satırda da hangi user olduğunu geçicem.
                 .build();
     }

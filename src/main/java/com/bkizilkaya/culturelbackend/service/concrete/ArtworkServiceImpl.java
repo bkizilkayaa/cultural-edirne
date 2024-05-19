@@ -10,8 +10,9 @@ import com.bkizilkaya.culturelbackend.model.FileData;
 import com.bkizilkaya.culturelbackend.model.TableNameEnum;
 import com.bkizilkaya.culturelbackend.repo.ArtworkRepository;
 import com.bkizilkaya.culturelbackend.service.abstraction.ArtworkService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
-import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -31,6 +32,7 @@ public class ArtworkServiceImpl implements ArtworkService {
     private final ArtworkRepository artworkRepository;
     private final FileDataServiceImpl fileDataService;
     private final ActionLogServiceImpl actionLogService;
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
 
     public ArtworkServiceImpl(ArtworkRepository artworkRepository, FileDataServiceImpl fileDataService, ActionLogServiceImpl actionLogService) {
@@ -47,6 +49,7 @@ public class ArtworkServiceImpl implements ArtworkService {
 
 
     @Override
+    @Transactional
     public ArtworkResponseDTO addArtwork(ArtworkCreateDTO artworkCreateDTO) {
         if (artworkCreateDTO.getParentId() != null) {
             getArtworkById(artworkCreateDTO.getParentId());
@@ -54,7 +57,8 @@ public class ArtworkServiceImpl implements ArtworkService {
 
         Artwork artwork = ArtworkMapper.INSTANCE.dtoToEntity(artworkCreateDTO);
         artworkRepository.save(artwork);
-        actionLogService.createLog(ActionEnum.ADD, TableNameEnum.ARTWORKS);
+        String mappedObject = getJsonObject(artwork);
+        actionLogService.createLog(ActionEnum.ADD, TableNameEnum.ARTWORKS, mappedObject);
         return ArtworkMapper.INSTANCE.artworkToResponseDto(artwork);
     }
 
@@ -70,7 +74,8 @@ public class ArtworkServiceImpl implements ArtworkService {
         updateArtworkField(artworkCreateDTO, artworkFromDb);
 
         artworkRepository.save(artworkFromDb);
-        actionLogService.createLog(ActionEnum.UPDATE, TableNameEnum.ARTWORKS);
+        String mappedObject = getJsonObject(artworkFromDb);
+        actionLogService.createLog(ActionEnum.UPDATE, TableNameEnum.ARTWORKS, mappedObject);
         return ArtworkMapper.INSTANCE.artworkToResponseDto(artworkFromDb);
     }
 
@@ -78,7 +83,8 @@ public class ArtworkServiceImpl implements ArtworkService {
     public void deleteArtwork(Long id) {
         Artwork artworkFromDb = getArtworkById(id);
         artworkRepository.deleteById(id);
-        actionLogService.createLog(ActionEnum.DELETE, TableNameEnum.ARTWORKS);
+        String mappedObject = getJsonObject(artworkFromDb);
+        actionLogService.createLog(ActionEnum.DELETE, TableNameEnum.ARTWORKS, mappedObject);
     }
 
     @Transactional
@@ -90,7 +96,9 @@ public class ArtworkServiceImpl implements ArtworkService {
 
             fileData.setArtworkImages(artwork);
             artwork.getFileData().add(fileData);
-            actionLogService.createLog(ActionEnum.ADD, TableNameEnum.ARTWORK_IMAGES);
+
+            String mappedObject = getJsonObject(artwork);
+            actionLogService.createLog(ActionEnum.ADD, TableNameEnum.ARTWORK_IMAGES, mappedObject);
         } catch (IOException e) {
             throw new RuntimeException(e.getMessage());
         }
@@ -112,7 +120,8 @@ public class ArtworkServiceImpl implements ArtworkService {
 
             fileDataFromDb.setArtworkImages(null);
         }
-        actionLogService.createLog(ActionEnum.DELETE, TableNameEnum.ARTWORK_IMAGES);
+        String mappedObject = getJsonObject(artwork);
+        actionLogService.createLog(ActionEnum.DELETE, TableNameEnum.ARTWORK_IMAGES, mappedObject);
     }
 
     private boolean isArtworkHaveNoImageWithGivenImageId(Long imageId, Artwork artwork) {
@@ -126,10 +135,7 @@ public class ArtworkServiceImpl implements ArtworkService {
     }
 
     protected Artwork getArtworkById(Long artworkId) {
-        Artwork artworkFromDb = artworkRepository.findById(artworkId).orElseThrow(() -> new NotFoundException(Artwork.class));
-        actionLogService.createLog(ActionEnum.GET, TableNameEnum.ARTWORKS);
-        return artworkFromDb;
-
+        return artworkRepository.findById(artworkId).orElseThrow(() -> new NotFoundException(Artwork.class));
     }
 
     private void updateArtworkField(ArtworkCreateDTO artworkCreateDTO, Artwork artworkFromDb) {
@@ -139,5 +145,16 @@ public class ArtworkServiceImpl implements ArtworkService {
         artworkFromDb.setAuthorId(artworkCreateDTO.getAuthorId());
         artworkFromDb.setParentId(artworkCreateDTO.getParentId());
         artworkFromDb.setModifiedDate(LocalDateTime.now());
+    }
+
+    private String getJsonObject(Artwork artwork) {
+        ArtworkResponseDTO artworkResponseDTO = ArtworkMapper.INSTANCE.entityToDto(artwork);
+        String mappedObject;
+        try {
+            mappedObject = objectMapper.writeValueAsString(artworkResponseDTO);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+        return mappedObject;
     }
 }
