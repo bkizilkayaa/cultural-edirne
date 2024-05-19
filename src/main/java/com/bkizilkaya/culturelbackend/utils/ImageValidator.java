@@ -15,7 +15,7 @@ public class ImageValidator {
 
     public boolean isImage(MultipartFile file) {
         try {
-            if (!checkFileSize(file)) return false;
+            if (isFileSizeNull(file)) return false;
             BufferedImage image = ImageIO.read(new ByteArrayInputStream(file.getBytes()));
             return checkDimensionsOfImage(image);
         } catch (Exception e) {
@@ -28,11 +28,11 @@ public class ImageValidator {
     }
 
     public boolean isFileSizeValid(MultipartFile file) {
-        if (!checkFileSize(file)) return false;
+        if (isFileSizeNull(file)) return false;
         return file.getSize() <= MAX_FILE_SIZE;
     }
 
-    private boolean checkFileSize(MultipartFile file) {
-        return file != null && !file.isEmpty();
+    private boolean isFileSizeNull(MultipartFile file) {
+        return file == null || file.isEmpty();
     }
 }

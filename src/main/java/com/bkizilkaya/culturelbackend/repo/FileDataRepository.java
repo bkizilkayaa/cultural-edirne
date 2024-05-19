@@ -12,9 +12,9 @@ import java.util.Optional;
 public interface FileDataRepository extends JpaRepository<FileData, Long> {
     Optional<FileData> findByName(String fileName);
 
-    @Query("SELECT fd.Id FROM FileData fd LEFT JOIN fd.artworkImages ai WHERE ai IS NULL")
+    @Query("SELECT fd.Id FROM FileData fd LEFT JOIN fd.artworkImages ai LEFT JOIN fd.touristSpotImages ti ON fd.Id = ti.Id WHERE ai.Id IS NULL AND ti.Id IS NULL")
     Optional<List<Long>> findUnusedFilesId();
 
-    @Query("SELECT fd.name FROM FileData fd LEFT JOIN fd.artworkImages ai WHERE ai IS NULL")
+    @Query("SELECT fd.name FROM FileData fd LEFT JOIN fd.artworkImages ai LEFT JOIN fd.touristSpotImages ti ON fd.Id = ti.Id WHERE ai.Id IS NULL AND ti.Id IS NULL")
     Optional<List<String>> findUnusedFilesName();
 }

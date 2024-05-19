@@ -1,7 +1,7 @@
 package com.bkizilkaya.culturelbackend.service.concrete;
 
 import com.bkizilkaya.culturelbackend.dto.filedata.response.FileDataResponseDTO;
-import com.bkizilkaya.culturelbackend.exception.SpecifiedFileNotFoundException;
+import com.bkizilkaya.culturelbackend.exception.NotFoundException;
 import com.bkizilkaya.culturelbackend.exception.ValidationException;
 import com.bkizilkaya.culturelbackend.mapper.FileDataMapper;
 import com.bkizilkaya.culturelbackend.model.FileData;
@@ -14,7 +14,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -47,17 +46,33 @@ public class FileDataServiceImpl implements StorageService {
         if (!imageValidator.isFileSizeValid(multiPartFile)) {
             throw new ValidationException("Maximum file size reached : 10MB+");
         }
+
         String fileName = pathService.generateFileName(multiPartFile);
-        String filePath = FOLDER_PATH + fileName;
+        String basePath = System.getProperty("user.dir") + FOLDER_PATH;
+
+        checkFilePathAndCreateFoldersIfNotExists(basePath);
         Long fileId = saveFileDataToDatabase(multiPartFile, fileName);
-        multiPartFile.transferTo(new File(filePath));
+        transferFile(multiPartFile, fileName, basePath);
+
         return fileId;
     }
 
+    private static void transferFile(MultipartFile multiPartFile, String fileName, String basePath) throws IOException {
+        File file = new File(basePath, fileName);
+        multiPartFile.transferTo(file);
+    }
+
+    private static void checkFilePathAndCreateFoldersIfNotExists(String basePath) {
+        File folder = new File(basePath);
+        if (!folder.exists()) {
+            folder.mkdirs();
+        }
+    }
+
     @Override
-    public String getFilePathFromStorage(String fileName){
+    public String getFilePathFromStorage(String fileName) {
         FileData fileData = findByName(fileName);
-        return FOLDER_PATH + fileData.getName();
+        return System.getProperty("user.dir") + FOLDER_PATH + fileData.getName();
     }
 
     private Long saveFileDataToDatabase(MultipartFile multiPartFile, String fileName) {
@@ -72,32 +87,28 @@ public class FileDataServiceImpl implements StorageService {
     @Override
     public FileData findByName(String fileName) {
         return fileDataRepository.findByName(fileName)
-                .orElseThrow(() -> new SpecifiedFileNotFoundException("file not found with name : ", fileName));
-    }
-
-    protected FileData findById(Long fileId) {
-        return fileDataRepository.findById(fileId)
-                .orElseThrow(() -> new SpecifiedFileNotFoundException("file not found with id"));
+                .orElseThrow(() -> new NotFoundException(FileData.class, fileName));
     }
 
     @Override
     public void deleteFile(Long fileId) {
         FileData fileDataFromDb = findById(fileId);
-        if (fileDataFromDb != null) {
-            fileDataRepository.deleteById(fileId);
-        } else {
-            throw new SpecifiedFileNotFoundException("file not found with id");
-        }
+        fileDataRepository.deleteById(fileId);
     }
 
     @Override
     public List<Long> findUnusedFilesId() {
-        return fileDataRepository.findUnusedFilesId().orElseThrow(()-> new RuntimeException("an error occured when fetching data from db"));
+        return fileDataRepository.findUnusedFilesId().orElseThrow(() -> new RuntimeException("an error occured when fetching data from db"));
     }
 
     @Override
     public List<String> findUnusedFilesName() {
-        return fileDataRepository.findUnusedFilesName().orElseThrow(()-> new RuntimeException("an error occured when fetching data from db"));
+        return fileDataRepository.findUnusedFilesName().orElseThrow(() -> new RuntimeException("an error occured when fetching data from db"));
+    }
+
+    protected FileData findById(Long fileId) {
+        return fileDataRepository.findById(fileId)
+                .orElseThrow(() -> new NotFoundException(FileData.class));
     }
 
 }

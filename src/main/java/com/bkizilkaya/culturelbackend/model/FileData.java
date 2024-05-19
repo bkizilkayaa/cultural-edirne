@@ -30,8 +30,8 @@ import java.time.LocalDateTime;
 public class FileData {
 
     @Id
-    @GeneratedValue(generator = "genAttractionsSeq", strategy = GenerationType.SEQUENCE)
-    @SequenceGenerator(name = "genAttractionsSeq", sequenceName = "SEQ_ATTRACTIONS", initialValue = 1000, allocationSize = 1)
+    @GeneratedValue(generator = "genFileDataSeq", strategy = GenerationType.SEQUENCE)
+    @SequenceGenerator(name = "genFileDataSeq", sequenceName = "SEQ_FILE_DATA", initialValue = 1011, allocationSize = 11)
     private Long Id;
 
     @Column(name = "NAME")

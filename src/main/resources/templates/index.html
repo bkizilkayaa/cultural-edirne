@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Admin Paneli</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="/webjars/bootstrap/4.5.2/css/bootstrap.css"/>
+    <!-- Özel CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<div class="container">
+    <h1>Admin Paneli</h1>
+    <p th:text="' Thymeleaf ile oluşturulmuş admin paneline hoş geldiniz!'"></p>
+    <p>Admin paneline erişmek için
+        <a th:href="@{/admin}">buraya</a> tıklayın.
+    </p>
+</div>
+</body>
+</html>

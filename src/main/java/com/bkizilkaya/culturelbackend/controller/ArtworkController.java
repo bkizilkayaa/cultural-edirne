@@ -17,10 +17,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.NO_CONTENT;
 import static org.springframework.http.HttpStatus.OK;
 
 @RestController
@@ -47,7 +47,7 @@ public class ArtworkController {
     @PostMapping("/{artworkId}/images")
     public ResponseEntity<String> addImageToArtwork(@PathVariable Long artworkId, @RequestParam("image") MultipartFile file) {
         Long artworkImagesArtworkId = artworkService.addImageToArtwork(artworkId, file);
-        String returnMessage = artworkImagesArtworkId + " idli artworke resim eklendi";
+        String returnMessage = "Artworke basariyla resim eklendi";
         return new ResponseEntity<>(returnMessage, OK);
     }
 
@@ -72,13 +72,13 @@ public class ArtworkController {
     @DeleteMapping("/{artworkId}")
     public ResponseEntity<Void> deleteArtwork(@PathVariable Long artworkId) {
         artworkService.deleteArtwork(artworkId);
-        return new ResponseEntity<>(OK);
+        return new ResponseEntity<>(NO_CONTENT);
     }
 
     @DeleteMapping("/{artworkId}/images/{imageId}")
     public ResponseEntity<String> removeArtworkImageFromArtwork(@PathVariable Long artworkId, @PathVariable Long imageId) {
         artworkService.removeArtworkImageFromArtwork(artworkId, imageId);
-        return ResponseEntity.status(OK).body("Artwork image removed from artwork successfully");
+        return ResponseEntity.status(NO_CONTENT).body("Artwork image removed from artwork successfully");
     }
 
 }

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Update Artwork Images</title>
+  <link rel="stylesheet" href="/webjars/bootstrap/4.5.2/css/bootstrap.css"/>
+  <!-- Özel CSS -->
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="background-style">
+<div class="container">
+  <h1 class="baslik" >Sanat Eserleri Yönetimi</h1>
+  <hr>
+  <h2 class="baslik">Fotoğraf Galerisi Yönetimi</h2>
+
+  <form action="#" th:action="@{/artworks-list/updateArtworkImages/{id}/addImages(id=${artwork.id})}" method="POST" enctype="multipart/form-data">
+    <div class="form-group">
+      <label for="image" class="text-label">Fotoğraf Seç:</label>
+      <input type="file" id="image" name="multipartFile" class="form-control-file text-label"/>
+    </div>
+    <button type="submit" class="btn btn-primary">Fotoğraf Ekle</button>
+
+    <input type="hidden" th:field="*{id}"/>
+
+    <div class="gallery-label">Galeri</div>
+
+    <!-- Display Existing Images -->
+    <div class="row mt-5">
+      <div class="col-sm-12">
+        <div class="row">
+          <!-- Iterate through each image -->
+          <div th:each="fileData, index : ${artwork.fileData}" class="col-md-4 mb-4">
+            <div class="card">
+              <img th:src="${'/files/' + fileData.name}" class="card-img-top" alt="Artwork Image">
+              <div class="card-body">
+                <a class="btn btn-danger mt-2" onclick="deleteImage(this)"
+                   th:href="@{'/artworks-list/' + ${artwork.id} + '/deleteImage/' + ${fileData.id}}">Sil</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <hr>
+  <a th:href="@{/artworks-list/showFormForUpdate/{id}(id=${artwork.id})}" class="pb-4">Geri dön</a>
+</div>
+<script>
+  function deleteImage(button) {
+    if (confirm("Resmi silmek istediginize emin misiniz?")) {
+      window.location.href = button.getAttribute('href');
+    }
+  }
+</script>
+</body>
+</html>

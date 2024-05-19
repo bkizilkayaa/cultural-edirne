@@ -1,5 +1,7 @@
 package com.bkizilkaya.culturelbackend.exception;
 
+import com.bkizilkaya.culturelbackend.configuration.CustomLocalDateTimeSerializer;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,6 +18,7 @@ import java.time.LocalDateTime;
 @Builder
 @Component
 public class CustomErrorResponse {
+    @JsonSerialize(using = CustomLocalDateTimeSerializer.class)
     private LocalDateTime timestamp;
     private int status;
     private String error;
