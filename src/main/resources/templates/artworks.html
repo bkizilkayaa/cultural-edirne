@@ -5,17 +5,19 @@
     <meta charset="UTF-8">
     <title>Artworks List</title>
     <link rel="stylesheet" href="/webjars/bootstrap/4.5.2/css/bootstrap.css">
-    <!-- Özel CSS -->
     <link rel="stylesheet" href="/css/style.css">
 </head>
 <body class="background-style">
 
-<div class="mx-2 px-2 d-flex justify-content-center align-items-center">
-    <h2 class="py-2 my-2 baslik">Sanat Eserleri | Yönetim Sistemi</h2>
-</div>
 <div th:if="${successMessage}" class="alert alert-success success-message" role="alert" id="success-message">
     <span th:text="${successMessage}"></span>
 </div>
+
+<div class="mx-2 px-2 d-flex justify-content-center align-items-center">
+    <h2 class="py-2 my-2 baslik">Sanat Eserleri | Yönetim Sistemi</h2>
+</div>
+
+<hr>
 
 <div class="container-table">
     <div class="container-table">

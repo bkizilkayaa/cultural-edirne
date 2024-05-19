@@ -34,8 +34,9 @@ public class PanelArtworkController {
     }
 
     @PostMapping("/addArtwork")
-    public String addArtworkPanel(@ModelAttribute("artwork") ArtworkCreateDTO model) {
+    public String addArtworkPanel(@ModelAttribute("artwork") ArtworkCreateDTO model, RedirectAttributes redirectAttributes) {
         artworkService.addArtwork(model);
+        redirectAttributes.addFlashAttribute("successMessage", "Kayıt başarıyla eklendi!");
         return "redirect:/artworks-list";
     }
 
@@ -62,8 +63,9 @@ public class PanelArtworkController {
     }
 
     @GetMapping("/deleteArtwork/{id}")
-    public String deleteArtwork(@PathVariable(value = "id") Long id) {
+    public String deleteArtwork(@PathVariable(value = "id") Long id, RedirectAttributes redirectAttributes) {
         this.artworkService.deleteArtwork(id);
+        redirectAttributes.addFlashAttribute("successMessage", "Kayıt silindi!");
         return "redirect:/artworks-list";
     }
 
