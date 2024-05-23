@@ -57,6 +57,14 @@ public class ArtworkController {
         return new ResponseEntity<>(artworkResponseDTO, CREATED);
     }
 
+    @PostMapping("/save-multiple")
+    public ResponseEntity<String> addArtworkList(@RequestBody List<ArtworkCreateDTO> newArtworkList) {
+        for (ArtworkCreateDTO artwork : newArtworkList) {
+            artworkService.addArtwork(artwork);
+        }
+        return new ResponseEntity<>("Objects created successfully", CREATED);
+    }
+
     @GetMapping("/{artwork_id}")
     public ResponseEntity<ArtworkResponseDTO> getArtworkForGivenId(@PathVariable Long artwork_id) {
         ArtworkResponseDTO artworkFromDb = artworkService.getArtworkGivenId(artwork_id);
