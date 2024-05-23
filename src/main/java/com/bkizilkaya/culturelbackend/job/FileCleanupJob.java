@@ -46,14 +46,18 @@ public class FileCleanupJob {
         for (String fileName : fileNamesToDelete) {
             File fileToDelete = new File(FOLDER_PATH + fileName);
             if (fileToDelete.exists()) {
-                if (fileToDelete.delete()) {
-                    log.info("Dosya basariyla silindi: " + fileName);
-                } else {
-                    log.error("Dosya silinirken bir hata olustu: " + fileName);
-                }
+                deleteSingleFile(fileName, fileToDelete);
             } else {
                 log.error("Silinecek dosya bulunamadi: " + fileName);
             }
+        }
+    }
+
+    private static void deleteSingleFile(String fileName, File fileToDelete) {
+        if (fileToDelete.delete()) {
+            log.info("Dosya basariyla silindi: " + fileName);
+        } else {
+            log.error("Dosya silinirken bir hata olustu: " + fileName);
         }
     }
 
