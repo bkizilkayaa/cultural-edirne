@@ -4,6 +4,7 @@ import com.bkizilkaya.culturelbackend.dto.artwork.request.ArtworkCreateDTO;
 import com.bkizilkaya.culturelbackend.dto.artwork.response.ArtworkResponseDTO;
 import com.bkizilkaya.culturelbackend.dto.filedata.response.FileDataResponseDTO;
 import com.bkizilkaya.culturelbackend.service.concrete.ArtworkServiceImpl;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -36,6 +37,12 @@ public class ArtworkController {
     @GetMapping
     public ResponseEntity<List<ArtworkResponseDTO>> getAllArtworks() {
         return new ResponseEntity<>(artworkService.getAllArtworks(), OK);
+    }
+
+    @GetMapping("/page/{pageNum}")
+    public ResponseEntity<Page<ArtworkResponseDTO>> getArtworkPaginated(@PathVariable int pageNum) {
+        Page<ArtworkResponseDTO> paginated = artworkService.findPaginated(pageNum, 5);
+        return new ResponseEntity<>(paginated, OK);
     }
 
     @GetMapping("/{artworkId}/images")
