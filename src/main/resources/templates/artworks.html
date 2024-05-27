@@ -1,32 +1,57 @@
 <!DOCTYPE html>
-<html lang="en"
+<html lang="tr"
       xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <title>Sanat Eserleri Listesi</title>
     <link rel="stylesheet" href="/webjars/bootstrap/4.5.2/css/bootstrap.css">
     <link rel="stylesheet" href="/css/style.css">
 </head>
 <body class="background-style">
-
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top navbar-gradient">
+    <a class="navbar-brand navBarYazi" href="#">Cultural-Backend Admin Paneli</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto navBarYazi">
+            <li class="nav-item pr-2">
+                <a class="nav-link" href="/">Ana Sayfa <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item active pr-2">
+                <a class="nav-link" href="/artworks-list">Sanat Eserleri Yönetimi</a>
+            </li>
+            <li class="nav-item pr-2">
+                <a class="nav-link" href="#">Gezilecek Yerler Yönetimi</a>
+            </li>
+            <li class="nav-item pr-2">
+                <a class="nav-link" href="#">Log Yönetimi</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link bg-danger font-weight-bold text-light rounded-pill border border-light px-4" href="#">Çıkış</a>
+            </li>
+        </ul>
+    </div>
+</nav>
 <div th:if="${successMessage}" class="alert alert-success success-message" role="alert" id="success-message">
     <span th:text="${successMessage}"></span>
 </div>
 
-<div class="mx-2 px-2 d-flex justify-content-center align-items-center">
-    <h2 class="py-2 my-2 baslik">Sanat Eserleri | Yönetim Sistemi</h2>
-</div>
+<div class="container-table pt-4 mt-5">
+    <div class="mx-2 px-2 d-flex justify-content-center align-items-center">
+        <h2 class="py-2 my-2 baslik">Sanat Eserleri | Yönetim Sistemi</h2>
+    </div>
 
-<hr>
+    <hr>
 
-<div class="container-table">
     <div class="container-table">
         <div class="row mb-3">
             <div class="col-md-6 text-left">
                 <h2 class="mt-2 baslik">Kayıt Listesi</h2>
             </div>
             <div class="col-md-6 text-right">
-                <a th:href="@{/artworks-list/showNewArtworkForm}" class="btn-lg btn-primary font-weight-bold">Kayıt Ekle</a>
+                <a th:href="@{/artworks-list/showNewArtworkForm}" class="btn-lg btn-primary font-weight-bold rounded-pill border border-light px-4">Kayıt Ekle</a>
             </div>
         </div>
 
@@ -67,14 +92,14 @@
                     </div>
                 </td>
                 <td>
-                    <div class="d-flex">
+                    <div class="d-flex align-content-center justify-content-center">
                         <a th:href="@{/artworks-list/showFormForUpdate/{id}(id=${artwork.id})}" class="btn mb-1">
                             <img src="/logo/edit.png" style="width: 50px" height="49px"/>
                         </a>
                         <a th:href="@{/artworks-list/updateArtworkImages/{id}(id=${artwork.id})}" class="btn mb-1">
                             <img src="/logo/gallery.png" style="width: 50px" height="49px"/>
                         </a>
-                        <a th:href="@{/artworks-list/deleteArtwork/{id}(id=${artwork.id})}" class="btn" onclick="deleteRecord(this)">
+                        <a th:href="@{/artworks-list/deleteArtwork/{id}(id=${artwork.id})}" class="btn mb-1" onclick="deleteRecord(this)">
                             <img src="/logo/delete.jpg" style="width: 50px" height="49px"/>
                         </a>
                     </div>
