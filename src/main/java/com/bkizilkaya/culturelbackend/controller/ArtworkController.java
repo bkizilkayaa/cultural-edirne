@@ -40,8 +40,9 @@ public class ArtworkController {
     }
 
     @GetMapping("/page/{pageNum}")
-    public ResponseEntity<Page<ArtworkResponseDTO>> getArtworkPaginated(@PathVariable int pageNum) {
-        Page<ArtworkResponseDTO> paginated = artworkService.findPaginated(pageNum, 5);
+    public ResponseEntity<Page<ArtworkResponseDTO>> getArtworkPaginated(@PathVariable String pageNum) {
+        int pageNumParsed = Integer.parseInt(pageNum);
+        Page<ArtworkResponseDTO> paginated = artworkService.findPaginated(pageNumParsed, 5);
         return new ResponseEntity<>(paginated, OK);
     }
 
