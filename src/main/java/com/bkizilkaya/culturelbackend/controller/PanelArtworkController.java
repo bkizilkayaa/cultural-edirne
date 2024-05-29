@@ -4,10 +4,12 @@ import com.bkizilkaya.culturelbackend.dto.artwork.request.ArtworkCreateDTO;
 import com.bkizilkaya.culturelbackend.dto.artwork.response.ArtworkResponseDTO;
 import com.bkizilkaya.culturelbackend.service.abstraction.ArtworkService;
 import com.bkizilkaya.culturelbackend.utils.PaginationValidator;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,8 +38,12 @@ public class PanelArtworkController {
     }
 
     @PostMapping("/addArtwork")
-    public String addArtworkPanel(@ModelAttribute("artwork") ArtworkCreateDTO model, RedirectAttributes redirectAttributes) {
-        artworkService.addArtwork(model);
+    public String addArtworkPanel(@ModelAttribute("artwork") @Valid ArtworkCreateDTO artworkCreateDTO, BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model) {
+        model.addAttribute("submitted", true);
+        if (bindingResult.hasErrors()) {
+            return "new_artwork";
+        }
+        artworkService.addArtwork(artworkCreateDTO);
         redirectAttributes.addFlashAttribute("successMessage", "Kayıt başarıyla eklendi!");
         return "redirect:/artworks-list";
     }
@@ -53,6 +59,7 @@ public class PanelArtworkController {
     public String showNewArtworkForm(Model model) {
         ArtworkCreateDTO artworkCreateDTO = new ArtworkCreateDTO();
         model.addAttribute("artwork", artworkCreateDTO);
+        model.addAttribute("submitted", false);
         return "new_artwork";
     }
 
@@ -91,9 +98,10 @@ public class PanelArtworkController {
     }
 
     @GetMapping("/{artworkId}/deleteImage/{fileId}")
-    public String deleteImage(@PathVariable("artworkId") Long artworkId, @PathVariable("fileId") Long fileId, Model model) {
+    public String deleteImage(@PathVariable("artworkId") Long artworkId, @PathVariable("fileId") Long fileId, Model model, RedirectAttributes redirectAttributes) {
         try {
             artworkService.removeArtworkImageFromArtwork(artworkId, fileId);
+            redirectAttributes.addFlashAttribute("successMessage", "Resim başarıyla silindi!");
             return "redirect:/artworks-list/showFormForUpdate/" + artworkId;
         } catch (Exception e) {
             model.addAttribute("errorMessage", e.getMessage());
@@ -127,11 +135,12 @@ public class PanelArtworkController {
     }
 
     @PostMapping("/updateArtworkImages/{id}/addImages")
-    public String updateAddImagesToArtwork(@PathVariable(value = "id") Long id, Model model, MultipartFile multipartFile) {
+    public String addImagesToArtwork(@PathVariable(value = "id") Long id, Model model, MultipartFile multipartFile, RedirectAttributes redirectAttributes) {
         try {
             ArtworkResponseDTO artworkResponseDTO = artworkService.getArtworkGivenId(id);
             artworkService.addImageToArtwork(id, multipartFile);
             model.addAttribute("artwork", artworkResponseDTO);
+            redirectAttributes.addFlashAttribute("successMessage", "Resim başarıyla eklendi!");
             return "redirect:/artworks-list/showFormForUpdate/" + id;
         } catch (Exception e) {
             model.addAttribute("errorMessage", e.getMessage());

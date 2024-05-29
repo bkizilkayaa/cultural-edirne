@@ -8,6 +8,10 @@
     color: white;
     font-size: 20px;
 }
+.text-label-dark{
+    color: black;
+    font-size: 20px;
+}
 th {
      width: 10%;
      border: 1px solid #dddddd;
@@ -53,6 +57,9 @@ tr p {
 .baslik{
     color: white;
 }
+.altBaslik{
+    color: white;
+}
 .navBarYazi{
     color: white;
     font-size: 18px;
@@ -65,24 +72,26 @@ tr p {
 .navbar-gradient {
     /**background: linear-gradient(90deg, rgba(0,36,61,1) 0%, rgba(9,9,121,1) 35%, rgba(0,212,255,1) 100%);**/
     background: linear-gradient(90deg, rgba(33,37,41,1) 0%, rgba(61,61,62,1) 46%, rgba(7,19,45,1) 100%);
+    border-bottom: 1px solid #fff;
 }
 .background-style{
     background-color: rgba(54, 64, 75, 1)!important;
 }
 .success-message {
     position: fixed;
+    font-size: 20px;
     opacity: 1;
     width: 300px;
     color: black;
     padding: 15px;
-    margin: 15px;
+    margin: 25px;
     transition: opacity 1s ease-out;
     border: 1px solid #d6e9c6;
     border-radius: 5px;
     text-align: center;
     z-index: 1000;
 }
-/* Scrollbar Stil Ayarları */
+
 ::-webkit-scrollbar {
     width: 12px;
 }
