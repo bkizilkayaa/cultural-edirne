@@ -4,6 +4,7 @@ import com.bkizilkaya.culturelbackend.dto.artwork.request.ArtworkCreateDTO;
 import com.bkizilkaya.culturelbackend.dto.artwork.response.ArtworkResponseDTO;
 import com.bkizilkaya.culturelbackend.dto.filedata.response.FileDataResponseDTO;
 import com.bkizilkaya.culturelbackend.service.concrete.ArtworkServiceImpl;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -60,7 +61,7 @@ public class ArtworkController {
     }
 
     @PostMapping
-    public ResponseEntity<ArtworkResponseDTO> addArtwork(@RequestBody ArtworkCreateDTO newArtwork) {
+    public ResponseEntity<ArtworkResponseDTO> addArtwork(@RequestBody @Valid ArtworkCreateDTO newArtwork) {
         ArtworkResponseDTO artworkResponseDTO = artworkService.addArtwork(newArtwork);
         return new ResponseEntity<>(artworkResponseDTO, CREATED);
     }

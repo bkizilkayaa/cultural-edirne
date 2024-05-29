@@ -110,10 +110,10 @@ public class FileDataServiceImpl implements StorageService {
 
     private void validateImage(MultipartFile multiPartFile) {
         if (!imageValidator.isImage(multiPartFile)) {
-            throw new ValidationException("not a valid image");
+            throw new ValidationException("Eklenen dosyayı kontrol ediniz!");
         }
         if (!imageValidator.isFileSizeValid(multiPartFile)) {
-            throw new ValidationException("Maximum file size reached : 10MB+");
+            throw new ValidationException("Maksimum dosya boyutuna ulaşıldı : 10MB+");
         }
     }
 }

@@ -49,7 +49,6 @@ public class ArtworkServiceImpl implements ArtworkService {
 
 
     @Override
-    @Transactional
     public ArtworkResponseDTO addArtwork(ArtworkCreateDTO artworkCreateDTO) {
         if (artworkCreateDTO.getParentId() != null) {
             getArtworkById(artworkCreateDTO.getParentId());
