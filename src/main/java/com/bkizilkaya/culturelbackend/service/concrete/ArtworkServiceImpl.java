@@ -105,8 +105,8 @@ public class ArtworkServiceImpl implements ArtworkService {
     }
 
     @Override
-    public List<ArtworkResponseDTO> searchArtworks(String query) {
-        return artworkRepository.findByTitleContainingIgnoreCase(query)
+    public List<ArtworkResponseDTO> searchArtworks(String title) {
+        return artworkRepository.findByTitleContainingIgnoreCase(title)
                 .stream().map(ArtworkMapper.INSTANCE::entityToDto).collect(Collectors.toList());
     }
 

@@ -148,10 +148,10 @@ public class PanelArtworkController {
         }
     }
     @GetMapping("/search")
-    public String searchArtworks(@RequestParam("query") String query, Model model) {
-        List<ArtworkResponseDTO> listArtworks = artworkService.searchArtworks(query);
+    public String searchArtworks(@RequestParam("title") String title, Model model) {
+        List<ArtworkResponseDTO> listArtworks = artworkService.searchArtworks(title);
         model.addAttribute("listArtworks", listArtworks);
-        model.addAttribute("query", query);
+        model.addAttribute("title", title);
         return "artworks";
     }
 }

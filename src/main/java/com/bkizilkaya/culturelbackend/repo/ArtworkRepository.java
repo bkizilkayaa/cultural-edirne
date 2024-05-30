@@ -10,5 +10,5 @@ import java.util.List;
 @Repository
 public interface ArtworkRepository extends JpaRepository<Artwork, Long> {
 
-    List<Artwork> findByTitleContainingIgnoreCase(String query);
+    List<Artwork> findByTitleContainingIgnoreCase(String title);
 }
