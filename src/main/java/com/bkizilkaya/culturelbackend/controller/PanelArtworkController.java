@@ -147,4 +147,11 @@ public class PanelArtworkController {
             return "error";
         }
     }
+    @GetMapping("/search")
+    public String searchArtworks(@RequestParam("query") String query, Model model) {
+        List<ArtworkResponseDTO> listArtworks = artworkService.searchArtworks(query);
+        model.addAttribute("listArtworks", listArtworks);
+        model.addAttribute("query", query);
+        return "artworks";
+    }
 }

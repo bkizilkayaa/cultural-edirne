@@ -105,6 +105,12 @@ public class ArtworkServiceImpl implements ArtworkService {
     }
 
     @Override
+    public List<ArtworkResponseDTO> searchArtworks(String query) {
+        return artworkRepository.findByTitleContainingIgnoreCase(query)
+                .stream().map(ArtworkMapper.INSTANCE::entityToDto).collect(Collectors.toList());
+    }
+
+    @Override
     @Transactional
     public void removeArtworkImageFromArtwork(Long artworkId, Long imageId) {
         Artwork artwork = getArtworkById(artworkId);
@@ -156,4 +162,5 @@ public class ArtworkServiceImpl implements ArtworkService {
         }
         return mappedObject;
     }
+
 }

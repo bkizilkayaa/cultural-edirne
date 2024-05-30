@@ -25,4 +25,6 @@ public interface ArtworkService {
 
     @Transactional
     Long addImageToArtwork(Long artworkId, MultipartFile multipartFile);
+
+    List<ArtworkResponseDTO> searchArtworks(String query);
 }
