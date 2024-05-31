@@ -1,10 +1,8 @@
 package com.bkizilkaya.culturelbackend.service.concrete;
 
-import com.bkizilkaya.culturelbackend.dto.artwork.response.ArtworkResponseDTO;
 import com.bkizilkaya.culturelbackend.dto.spot.request.TouristSpotCreateDTO;
 import com.bkizilkaya.culturelbackend.dto.spot.response.TouristSpotResponseDTO;
 import com.bkizilkaya.culturelbackend.exception.NotFoundException;
-import com.bkizilkaya.culturelbackend.mapper.ArtworkMapper;
 import com.bkizilkaya.culturelbackend.mapper.TouristSpotMapper;
 import com.bkizilkaya.culturelbackend.model.FileData;
 import com.bkizilkaya.culturelbackend.model.TouristSpot;
@@ -12,6 +10,7 @@ import com.bkizilkaya.culturelbackend.repo.TouristSpotRepository;
 import com.bkizilkaya.culturelbackend.service.abstraction.TouristSpotService;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -115,9 +114,21 @@ public class TouristSpotServiceImpl implements TouristSpotService {
         return touristSpotRepository.findById(spotId)
                 .orElseThrow(() -> new NotFoundException(TouristSpot.class));
     }
+
     @Override
     public Page<TouristSpotResponseDTO> findPaginated(int pageNo, int pageSize) {
         Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
         return this.touristSpotRepository.findAll(pageable).map(TouristSpotMapper.INSTANCE::entityToResponseDto);
+    }
+
+    @Override
+    public Page<TouristSpotResponseDTO> searchSpotsPaginated(String title, int pageNo, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
+        Page<TouristSpot> spots = touristSpotRepository.findByTitleContainingIgnoreCase(title, pageable);
+        List<TouristSpotResponseDTO> spotDtos = spots.stream()
+                .map(TouristSpotMapper.INSTANCE::entityToResponseDto)
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(spotDtos, pageable, spots.getTotalElements());
     }
 }
