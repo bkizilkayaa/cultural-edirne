@@ -104,9 +104,9 @@
                         <a th:href="@{/artworks-list/updateArtworkImages/{id}(id=${artwork.id})}" class="btn mb-1">
                             <img src="/logo/gallery.png" style="width: 50px" height="49px"/>
                         </a>
-                        <a th:href="@{/artworks-list/deleteArtwork/{id}(id=${artwork.id})}" class="btn mb-1" onclick="deleteRecord(this)">
+                        <button type="button" class="btn mb-1" th:data-toggle="modal" th:data-target="'#modal-warning-' + ${artwork.id}">
                             <img src="/logo/delete.jpg" style="width: 50px" height="49px"/>
-                        </a>
+                        </button>
                     </div>
                 </td>
             </tr>
@@ -127,6 +127,30 @@
 
 </div>
 </div>
+
+<div th:each="artwork : ${listArtworks}">
+    <div class="modal modal-warning fade" th:id="'modal-warning-' + ${artwork.id}" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Kayıt Sil</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <h3>Kaydı silmek istediğinize emin misiniz?</h3>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Kapat</button>
+                    <a th:href="@{/artworks-list/deleteArtwork/{id}(id=${artwork.id})}" class="btn btn-outline-danger"><i class="fa fa-check"></i>&nbsp;Evet, sil</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <script src="/webjars/jquery/3.5.1/jquery.min.js"></script>
 <script src="/webjars/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <script src="/js/script.js"></script>
