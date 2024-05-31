@@ -29,7 +29,7 @@ public class TouristSpotCreateDTO {
     @Size(min = 20, message = "İçerik minimum 20 karakter olmalıdır!")
     private String content;
     @NotEmpty(message = "Açıklama boş bırakılmamalı!")
-    @Size(min = 20, message = "Açıklama minimum 10 karakter olmalıdır!")
+    @Size(min = 10, message = "Açıklama minimum 10 karakter olmalıdır!")
     private String description;
 
     @JsonSerialize(using = CustomLocalDateTimeSerializer.class)
