@@ -5,6 +5,8 @@ import com.bkizilkaya.culturelbackend.model.FileData;
 import com.bkizilkaya.culturelbackend.model.ZipCode;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,8 +22,14 @@ import java.util.List;
 @JsonPropertyOrder({"id", "title", "description", "content", "zipCode", "authorId", "parentId", "fileData", "createDate", "modifiedDate"})
 public class TouristSpotCreateDTO {
     private Long Id;
+
+    @NotEmpty(message = "Başlık boş bırakılmamalı!")
     private String title;
+    @NotEmpty(message = "İçerik boş bırakılmamalı!")
+    @Size(min = 20, message = "İçerik minimum 20 karakter olmalıdır!")
     private String content;
+    @NotEmpty(message = "Açıklama boş bırakılmamalı!")
+    @Size(min = 20, message = "Açıklama minimum 10 karakter olmalıdır!")
     private String description;
 
     @JsonSerialize(using = CustomLocalDateTimeSerializer.class)

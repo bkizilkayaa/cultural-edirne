@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Getter
@@ -34,4 +35,11 @@ public class TouristSpotResponseDTO {
     private ZipCode zipCode;
     private List<FileDataResponseDTO> fileData;
     private Long parentId;
+
+    public String getFormattedDate(LocalDateTime ldt) {
+        if (ldt != null) {
+            return ldt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        }
+        return "-";
+    }
 }
