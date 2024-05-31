@@ -56,7 +56,7 @@
         <div class="row">
           <div th:each="fileData, index : ${spot.fileData}" class="col-md-4 mb-4">
             <div class="card">
-              <img th:src="${'/files/' + fileData.name}" class="card-img-top" alt="Artwork Image">
+              <img th:src="${'/files/' + fileData.name}" class="card-img-top" alt="Spot Image">
               <div class="card-body">
                 <a class="btn btn-danger mt-2" onclick="deleteImage(this)"
                    th:href="@{'/touristic-spots-list/' + ${spot.id} + '/deleteImage/' + ${fileData.id}}">Sil</a>
