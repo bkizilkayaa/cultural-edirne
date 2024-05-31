@@ -34,6 +34,7 @@ public class PanelArtworkController {
 
     @GetMapping()
     public String artworkPanel(Model model) {
+        model.addAttribute("title", "");
         return findPaginated(1, model);
     }
 
@@ -49,10 +50,27 @@ public class PanelArtworkController {
     }
 
     @PostMapping("/saveArtwork")
-    public String saveArtworkPanel(@ModelAttribute("artwork") ArtworkCreateDTO model, RedirectAttributes redirectAttributes) {
-        artworkService.updateArtwork(model.getId(), model);
-        redirectAttributes.addFlashAttribute("successMessage", "Kayıt başarıyla güncellendi!");
-        return "redirect:/artworks-list";
+    public String saveArtworkPanel(
+            @ModelAttribute("artwork") @Valid ArtworkCreateDTO artworkCreateDto,
+            BindingResult bindingResult,
+            RedirectAttributes redirectAttributes,
+            Model model) {
+
+        model.addAttribute("submitted", true);
+
+        if (bindingResult.hasErrors()) {
+            return "update_artwork";
+        }
+
+        try {
+            artworkService.updateArtwork(artworkCreateDto.getId(), artworkCreateDto);
+            redirectAttributes.addFlashAttribute("successMessage", "Kayıt başarıyla güncellendi!");
+            return "redirect:/artworks-list";
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", e.getMessage());
+            model.addAttribute("status", HttpStatus.BAD_REQUEST.value());
+            return "error";
+        }
     }
 
     @GetMapping("/showNewArtworkForm")
@@ -65,10 +83,17 @@ public class PanelArtworkController {
 
     @GetMapping("/showFormForUpdate/{id}")
     public String showFormForUpdate(@PathVariable(value = "id") Long id, Model model) {
-        ArtworkResponseDTO artworkResponseDTO = artworkService.getArtworkGivenId(id);
+        try {
+            ArtworkResponseDTO artworkResponseDTO = artworkService.getArtworkGivenId(id);
 
-        model.addAttribute("artwork", artworkResponseDTO);
-        return "update_artwork";
+            model.addAttribute("artwork", artworkResponseDTO);
+            model.addAttribute("submitted", false);
+            return "update_artwork";
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", e.getMessage());
+            model.addAttribute("status", HttpStatus.BAD_REQUEST.value());
+            return "error";
+        }
     }
 
     @GetMapping("/deleteArtwork/{id}")
@@ -147,9 +172,15 @@ public class PanelArtworkController {
             return "error";
         }
     }
+
     @GetMapping("/search")
-    public String searchArtworks(@RequestParam("title") String title, Model model) {
-        List<ArtworkResponseDTO> listArtworks = artworkService.searchArtworks(title);
+    public String searchArtworks(@RequestParam("title") String title, @RequestParam(defaultValue = "1") int pageNo, Model model) {
+        int pageSize = 5;
+        Page<ArtworkResponseDTO> page = artworkService.searchArtworksPaginated(title, pageNo, pageSize);
+        List<ArtworkResponseDTO> listArtworks = page.getContent();
+        model.addAttribute("currentPage", pageNo);
+        model.addAttribute("totalPages", page.getTotalPages());
+        model.addAttribute("totalItems", page.getTotalElements());
         model.addAttribute("listArtworks", listArtworks);
         model.addAttribute("title", title);
         return "artworks";

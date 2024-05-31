@@ -15,7 +15,7 @@ public interface ArtworkService {
 
     ArtworkResponseDTO getArtworkGivenId(Long artworkId);
 
-    ArtworkResponseDTO updateArtwork(Long id, ArtworkCreateDTO artworkCreateDTO);
+    ArtworkResponseDTO updateArtwork(Long oldArtworkId, ArtworkCreateDTO newArtworkDto);
 
     void deleteArtwork(Long id);
 
@@ -26,5 +26,5 @@ public interface ArtworkService {
     @Transactional
     Long addImageToArtwork(Long artworkId, MultipartFile multipartFile);
 
-    List<ArtworkResponseDTO> searchArtworks(String title);
+    Page<ArtworkResponseDTO> searchArtworksPaginated(String title, int pageNo, int pageSize);
 }

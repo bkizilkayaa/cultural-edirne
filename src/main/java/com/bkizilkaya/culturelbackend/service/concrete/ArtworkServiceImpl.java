@@ -15,6 +15,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -68,9 +69,9 @@ public class ArtworkServiceImpl implements ArtworkService {
     }
 
     @Override
-    public ArtworkResponseDTO updateArtwork(Long id, ArtworkCreateDTO artworkCreateDTO) {
-        Artwork artworkFromDb = getArtworkById(id);
-        updateArtworkField(artworkCreateDTO, artworkFromDb);
+    public ArtworkResponseDTO updateArtwork(Long oldArtworkId, ArtworkCreateDTO newArtworkDto) {
+        Artwork artworkFromDb = getArtworkById(oldArtworkId);
+        updateArtworkField(newArtworkDto, artworkFromDb);
 
         artworkRepository.save(artworkFromDb);
         String mappedObject = getJsonObject(artworkFromDb);
@@ -105,9 +106,13 @@ public class ArtworkServiceImpl implements ArtworkService {
     }
 
     @Override
-    public List<ArtworkResponseDTO> searchArtworks(String title) {
-        return artworkRepository.findByTitleContainingIgnoreCase(title)
-                .stream().map(ArtworkMapper.INSTANCE::entityToDto).collect(Collectors.toList());
+    public Page<ArtworkResponseDTO> searchArtworksPaginated(String title, int pageNo, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
+        Page<Artwork> artworks = artworkRepository.findByTitleContainingIgnoreCase(title, pageable);
+        List<ArtworkResponseDTO> artworkDTOs = artworks.stream()
+                .map(ArtworkMapper.INSTANCE::entityToDto)
+                .collect(Collectors.toList());
+        return new PageImpl<>(artworkDTOs, pageable, artworks.getTotalElements());
     }
 
     @Override

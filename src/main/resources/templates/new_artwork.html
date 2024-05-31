@@ -43,7 +43,11 @@
             <div class="col-sm-10">
                 <input type="text" th:field="*{title}" placeholder="Sanat Eseri Başlığı"
                        class="form-control col-6" th:classappend="${submitted and #fields.hasErrors('title')} ? 'is-invalid' : (${submitted} ? 'is-valid' : '')">
-                <span th:if="${#fields.hasErrors('title')}" class="text-danger mb-4">Sanat eseri başlığı ekleyiniz!</span>
+                <div th:if="${#fields.hasErrors('title')}" class="text-danger mb-4">
+                    <div th:each="error : ${#fields.errors('title')}" class="mb-1">
+                        <span th:text="${error}"></span>
+                    </div>
+                </div>
                 <span th:if="${submitted and !#fields.hasErrors('title')}" class="text-success mb-4">İyi gözüküyor!</span>
             </div>
         </div>
@@ -53,7 +57,11 @@
             <div class="col-sm-10">
                 <textarea type="text" th:field="*{description}" placeholder="Sanat Eseri Kısa Açıklaması"
                           class="form-control" th:classappend="${submitted and #fields.hasErrors('description')} ? 'is-invalid' : (${submitted} ? 'is-valid' : '')" style="height: 120px"></textarea>
-                <span th:if="${#fields.hasErrors('description')}" class="text-danger mb-4">Açıklama minimum 10 karakter olmalı!</span>
+                <div th:if="${#fields.hasErrors('description')}" class="text-danger mb-4">
+                    <div th:each="error : ${#fields.errors('description')}" class="mb-1">
+                        <span th:text="${error}"></span>
+                    </div>
+                </div>
                 <span th:if="${submitted and !#fields.hasErrors('description')}" class="text-success mb-4">İyi gözüküyor!</span>
             </div>
         </div>
@@ -62,7 +70,11 @@
             <div class="col-sm-10">
                 <textarea type="text" th:field="*{content}" placeholder="Sanat Eseri İçeriği" class="form-control"
                           th:classappend="${submitted and #fields.hasErrors('content')} ? 'is-invalid' : (${submitted} ? 'is-valid' : '')" style="height: 200px"></textarea>
-                <span th:if="${#fields.hasErrors('content')}" class="text-danger mb-4">İçerik minimum 20 karakter olmalı!</span>
+                <div th:if="${#fields.hasErrors('content')}" class="text-danger mb-4">
+                    <div th:each="error : ${#fields.errors('content')}" class="mb-1">
+                        <span th:text="${error}"></span>
+                    </div>
+                </div>
                 <span th:if="${submitted and !#fields.hasErrors('content')}" class="text-success mb-4">İyi gözüküyor!</span>
             </div>
         </div>
