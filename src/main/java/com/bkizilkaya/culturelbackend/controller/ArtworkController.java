@@ -4,6 +4,8 @@ import com.bkizilkaya.culturelbackend.dto.artwork.request.ArtworkCreateDTO;
 import com.bkizilkaya.culturelbackend.dto.artwork.response.ArtworkResponseDTO;
 import com.bkizilkaya.culturelbackend.dto.filedata.response.FileDataResponseDTO;
 import com.bkizilkaya.culturelbackend.service.concrete.ArtworkServiceImpl;
+import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -38,6 +40,13 @@ public class ArtworkController {
         return new ResponseEntity<>(artworkService.getAllArtworks(), OK);
     }
 
+    @GetMapping("/page/{pageNum}")
+    public ResponseEntity<Page<ArtworkResponseDTO>> getArtworkPaginated(@PathVariable String pageNum) {
+        int pageNumParsed = Integer.parseInt(pageNum);
+        Page<ArtworkResponseDTO> paginated = artworkService.findPaginated(pageNumParsed, 5);
+        return new ResponseEntity<>(paginated, OK);
+    }
+
     @GetMapping("/{artworkId}/images")
     public ResponseEntity<List<FileDataResponseDTO>> getArtworkImage(@PathVariable Long artworkId) {
         List<FileDataResponseDTO> fileDataList = artworkService.getArtworkGivenId(artworkId).getFileData();
@@ -52,9 +61,17 @@ public class ArtworkController {
     }
 
     @PostMapping
-    public ResponseEntity<ArtworkResponseDTO> addArtwork(@RequestBody ArtworkCreateDTO newArtwork) {
+    public ResponseEntity<ArtworkResponseDTO> addArtwork(@RequestBody @Valid ArtworkCreateDTO newArtwork) {
         ArtworkResponseDTO artworkResponseDTO = artworkService.addArtwork(newArtwork);
         return new ResponseEntity<>(artworkResponseDTO, CREATED);
+    }
+
+    @PostMapping("/save-multiple")
+    public ResponseEntity<String> addArtworkList(@RequestBody List<ArtworkCreateDTO> newArtworkList) {
+        for (ArtworkCreateDTO artwork : newArtworkList) {
+            artworkService.addArtwork(artwork);
+        }
+        return new ResponseEntity<>("Objects created successfully", CREATED);
     }
 
     @GetMapping("/{artwork_id}")

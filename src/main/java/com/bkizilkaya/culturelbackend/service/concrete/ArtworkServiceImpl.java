@@ -10,8 +10,12 @@ import com.bkizilkaya.culturelbackend.model.FileData;
 import com.bkizilkaya.culturelbackend.model.TableNameEnum;
 import com.bkizilkaya.culturelbackend.repo.ArtworkRepository;
 import com.bkizilkaya.culturelbackend.service.abstraction.ArtworkService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -24,10 +28,12 @@ import java.util.stream.Collectors;
 
 
 @Service
+@Slf4j
 public class ArtworkServiceImpl implements ArtworkService {
     private final ArtworkRepository artworkRepository;
     private final FileDataServiceImpl fileDataService;
     private final ActionLogServiceImpl actionLogService;
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
 
     public ArtworkServiceImpl(ArtworkRepository artworkRepository, FileDataServiceImpl fileDataService, ActionLogServiceImpl actionLogService) {
@@ -51,7 +57,8 @@ public class ArtworkServiceImpl implements ArtworkService {
 
         Artwork artwork = ArtworkMapper.INSTANCE.dtoToEntity(artworkCreateDTO);
         artworkRepository.save(artwork);
-        actionLogService.createLog(ActionEnum.ADD, TableNameEnum.ARTWORKS);
+        String mappedObject = getJsonObject(artwork);
+        actionLogService.createLog(ActionEnum.ADD, TableNameEnum.ARTWORKS, mappedObject);
         return ArtworkMapper.INSTANCE.artworkToResponseDto(artwork);
     }
 
@@ -62,12 +69,13 @@ public class ArtworkServiceImpl implements ArtworkService {
     }
 
     @Override
-    public ArtworkResponseDTO updateArtwork(Long id, ArtworkCreateDTO artworkCreateDTO) {
-        Artwork artworkFromDb = getArtworkById(id);
-        updateArtworkField(artworkCreateDTO, artworkFromDb);
+    public ArtworkResponseDTO updateArtwork(Long oldArtworkId, ArtworkCreateDTO newArtworkDto) {
+        Artwork artworkFromDb = getArtworkById(oldArtworkId);
+        updateArtworkField(newArtworkDto, artworkFromDb);
 
         artworkRepository.save(artworkFromDb);
-        actionLogService.createLog(ActionEnum.UPDATE, TableNameEnum.ARTWORKS);
+        String mappedObject = getJsonObject(artworkFromDb);
+        actionLogService.createLog(ActionEnum.UPDATE, TableNameEnum.ARTWORKS, mappedObject);
         return ArtworkMapper.INSTANCE.artworkToResponseDto(artworkFromDb);
     }
 
@@ -75,7 +83,8 @@ public class ArtworkServiceImpl implements ArtworkService {
     public void deleteArtwork(Long id) {
         Artwork artworkFromDb = getArtworkById(id);
         artworkRepository.deleteById(id);
-        actionLogService.createLog(ActionEnum.DELETE, TableNameEnum.ARTWORKS);
+        String mappedObject = getJsonObject(artworkFromDb);
+        actionLogService.createLog(ActionEnum.DELETE, TableNameEnum.ARTWORKS, mappedObject);
     }
 
     @Transactional
@@ -87,11 +96,23 @@ public class ArtworkServiceImpl implements ArtworkService {
 
             fileData.setArtworkImages(artwork);
             artwork.getFileData().add(fileData);
-            actionLogService.createLog(ActionEnum.ADD, TableNameEnum.ARTWORK_IMAGES);
+
+            String mappedObject = getJsonObject(artwork);
+            actionLogService.createLog(ActionEnum.ADD, TableNameEnum.ARTWORK_IMAGES, mappedObject);
         } catch (IOException e) {
             throw new RuntimeException(e.getMessage());
         }
         return artworkId;
+    }
+
+    @Override
+    public Page<ArtworkResponseDTO> searchArtworksPaginated(String title, int pageNo, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNo - 1, pageSize);
+        Page<Artwork> artworks = artworkRepository.findByTitleContainingIgnoreCase(title, pageable);
+        List<ArtworkResponseDTO> artworkDTOs = artworks.stream()
+                .map(ArtworkMapper.INSTANCE::entityToDto)
+                .collect(Collectors.toList());
+        return new PageImpl<>(artworkDTOs, pageable, artworks.getTotalElements());
     }
 
     @Override
@@ -109,7 +130,8 @@ public class ArtworkServiceImpl implements ArtworkService {
 
             fileDataFromDb.setArtworkImages(null);
         }
-        actionLogService.createLog(ActionEnum.DELETE, TableNameEnum.ARTWORK_IMAGES);
+        String mappedObject = getJsonObject(artwork);
+        actionLogService.createLog(ActionEnum.DELETE, TableNameEnum.ARTWORK_IMAGES, mappedObject);
     }
 
     private boolean isArtworkHaveNoImageWithGivenImageId(Long imageId, Artwork artwork) {
@@ -123,10 +145,7 @@ public class ArtworkServiceImpl implements ArtworkService {
     }
 
     protected Artwork getArtworkById(Long artworkId) {
-        Artwork artworkFromDb = artworkRepository.findById(artworkId)
-                .orElseThrow(() -> new NotFoundException(Artwork.class));
-        actionLogService.createLog(ActionEnum.GET, TableNameEnum.ARTWORKS);
-        return artworkFromDb;
+        return artworkRepository.findById(artworkId).orElseThrow(() -> new NotFoundException(Artwork.class));
     }
 
     private void updateArtworkField(ArtworkCreateDTO artworkCreateDTO, Artwork artworkFromDb) {
@@ -137,4 +156,16 @@ public class ArtworkServiceImpl implements ArtworkService {
         artworkFromDb.setParentId(artworkCreateDTO.getParentId());
         artworkFromDb.setModifiedDate(LocalDateTime.now());
     }
+
+    private String getJsonObject(Artwork artwork) {
+        ArtworkResponseDTO artworkResponseDTO = ArtworkMapper.INSTANCE.entityToDto(artwork);
+        String mappedObject;
+        try {
+            mappedObject = objectMapper.writeValueAsString(artworkResponseDTO);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+        return mappedObject;
+    }
+
 }

@@ -5,6 +5,8 @@ import com.bkizilkaya.culturelbackend.model.FileData;
 import com.bkizilkaya.culturelbackend.model.ZipCode;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,8 +22,16 @@ import java.util.List;
 @AllArgsConstructor
 public class ArtworkCreateDTO {
     private Long Id;
+
+    @NotEmpty(message = "Başlık boş bırakılamaz")
     private String title;
+
+    @NotEmpty(message = "İçerik boş bırakılamaz")
+    @Size(min = 20, message = "İçerik minimum 20 karakterden oluşmalıdır!")
     private String content;
+
+    @NotEmpty(message = "Açıklama boş bırakılamaz")
+    @Size(min = 10, message = "Açıklama minimum 10 karakterden oluşmalıdır!")
     private String description;
 
     @JsonSerialize(using = CustomLocalDateTimeSerializer.class)

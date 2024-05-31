@@ -8,12 +8,18 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class NotFoundException extends RuntimeException {
     private static final String NOT_FOUND = " not found";
     private static final String WITH_NAME = " with name: ";
+    private String objectType;
 
     public NotFoundException(Class<?> clazz) {
         super(clazz.getSimpleName() + NOT_FOUND);
+        objectType = clazz.getSimpleName();
     }
 
     public NotFoundException(Class<FileData> clazz, String fileName) {
         super(clazz.getSimpleName() + NOT_FOUND + WITH_NAME + fileName);
+    }
+
+    public String getObjectType() {
+        return objectType;
     }
 }

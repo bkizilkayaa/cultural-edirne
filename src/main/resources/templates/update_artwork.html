@@ -1,41 +1,94 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <title>Update Artwork</title>
+    <title>Sanat Eseri | Güncelleme Ekranı</title>
     <link rel="stylesheet" href="/webjars/bootstrap/4.5.2/css/bootstrap.css"/>
-    <!-- Özel CSS -->
     <link rel="stylesheet" href="/css/style.css">
     <script src="/js/script.js"></script>
 </head>
 <body class="background-style">
-<div class="container">
-    <h1 class="baslik">Sanat Eseri Yönetimi</h1>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top navbar-gradient">
+    <a class="navbar-brand navBarYazi" href="#">Cultural-Backend Admin Paneli</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto navBarYazi">
+            <li class="nav-item pr-2">
+                <a class="nav-link" href="/">Ana Sayfa <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item active pr-2">
+                <a class="nav-link" href="/artworks-list">Sanat Eserleri Yönetimi</a>
+            </li>
+            <li class="nav-item pr-2">
+                <a class="nav-link" href="/touristic-spots-list">Gezilecek Yerler Yönetimi</a>
+            </li>
+            <li class="nav-item pr-2">
+                <a class="nav-link" href="#">Log Yönetimi</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link bg-danger font-weight-bold text-light rounded-pill border border-light px-4" href="#">Çıkış</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+<div th:if="${successMessage}" class="alert alert-success success-message" role="alert" id="success-message">
+    <span th:text="${successMessage}"></span>
+</div>
+<div class="container pt-4 mt-5">
+
+    <div class="d-flex justify-content-center align-content-center">
+        <h1 class="baslik">Sanat Eseri Yönetimi</h1>
+    </div>
+
     <hr>
-    <h2 class="baslik">Kayıt Bilgileri</h2>
+
+    <h2 class="altBaslik">Kayıt Bilgileri</h2>
     <hr>
-    <form action="#" th:action="@{/artworks-list/saveArtwork}" th:object="${artwork}" method="POST" onsubmit="onSubmitForm()">
+    <form action="#" th:action="@{/artworks-list/saveArtwork}" th:object="${artwork}" method="POST">
 
         <input type="hidden" th:field="*{id}"/>
 
         <div class="form-group row">
             <label for="title" class="col-sm-2 col-form-label text-label">Başlık:</label>
             <div class="col-sm-10">
-                <input type="text" th:field="*{title}" id="title" class="form-control mb-4 col-6">
+                <input type="text" th:field="*{title}" id="title" placeholder="Sanat Eseri Başlığı"
+                       class="form-control col-6" th:classappend="${submitted and #fields.hasErrors('title')} ? 'is-invalid' : (${submitted} ? 'is-valid' : '')">
+                <div th:if="${#fields.hasErrors('title')}" class="text-danger mb-4">
+                    <div th:each="error : ${#fields.errors('title')}">
+                        <span th:text="${error}"></span><br/>
+                    </div>
+                </div>
+                <span th:if="${submitted and !#fields.hasErrors('title')}" class="text-success mb-4">İyi gözüküyor!</span>
             </div>
         </div>
 
         <div class="form-group row">
             <label for="description" class="col-sm-2 col-form-label text-label">Açıklama:</label>
             <div class="col-sm-10">
-                <textarea th:field="*{description}" id="description" class="form-control mb-4" rows="5"></textarea>
+                <textarea th:field="*{description}" id="description" placeholder="Sanat Eseri Açıklaması"
+                          class="form-control" th:classappend="${submitted and #fields.hasErrors('description')} ? 'is-invalid' : (${submitted} ? 'is-valid' : '')"></textarea>
+                <div th:if="${#fields.hasErrors('description')}" class="text-danger mb-4">
+                    <div th:each="error : ${#fields.errors('description')}">
+                        <span th:text="${error}"></span><br/>
+                    </div>
+                </div>
+                <span th:if="${submitted and !#fields.hasErrors('description')}" class="text-success mb-4">İyi gözüküyor!</span>
             </div>
         </div>
 
         <div class="form-group row">
             <label for="content" class="col-sm-2 col-form-label text-label">İçerik:</label>
             <div class="col-sm-10">
-                <textarea th:field="*{content}" id="content" class="form-control mb-4" rows="10"></textarea>
+                <textarea th:field="*{content}" id="content" placeholder="Sanat Eseri İçeriği"
+                          class="form-control" th:classappend="${submitted and #fields.hasErrors('content')} ? 'is-invalid' : (${submitted} ? 'is-valid' : '')" rows="10"></textarea>
+                <div th:if="${#fields.hasErrors('content')}" class="text-danger mb-4">
+                    <div th:each="error : ${#fields.errors('content')}">
+                        <span th:text="${error}"></span><br/>
+                    </div>
+                </div>
+                <span th:if="${submitted and !#fields.hasErrors('content')}" class="text-success mb-4">İyi gözüküyor!</span>
             </div>
         </div>
 
@@ -52,20 +105,18 @@
                 <input type="text" th:field="*{modifiedDate}" id="modifiedDate" class="form-control mb-4 col-3" disabled>
             </div>
         </div>
-<hr>
+        <hr>
         <div class="row">
             <div class="col-sm-6 text-right">
-                <button type="submit" class="btn btn-info col-12 mb-3 text-label">Kaydı Güncelle</button>
+                <button type="submit" class="btn btn-success col-12 mb-3 text-label">Kaydı Güncelle</button>
             </div>
             <div class="col-sm-6 text-right">
-                <a th:href="@{'/artworks-list/updateArtworkImages/' + ${artwork.id}}" class="btn btn-secondary col-12 mb-3 text-label">Fotoğraf Galerisi Yönetimi</a>
+                <a th:href="@{'/artworks-list/updateArtworkImages/' + ${artwork.id}}" class="btn btn-info col-12 mb-3 text-label">Fotoğraf Galerisi Yönetimi</a>
             </div>
         </div>
     </form>
-<hr>
-
+    <hr>
     <a th:href="@{/artworks-list}" class="pb-4">Kayıt listesine geri dön</a>
 </div>
 </body>
-
 </html>

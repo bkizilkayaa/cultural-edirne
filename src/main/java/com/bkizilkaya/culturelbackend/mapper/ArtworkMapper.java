@@ -11,6 +11,7 @@ public interface ArtworkMapper {
     ArtworkMapper INSTANCE = Mappers.getMapper(ArtworkMapper.class);
 
     Artwork dtoToEntity(ArtworkCreateDTO artworkCreateDTO);
+    ArtworkResponseDTO entityToDto(Artwork artwork);
 
     ArtworkResponseDTO createDtoToResponseDto(ArtworkCreateDTO artworkCreateDTO);
 

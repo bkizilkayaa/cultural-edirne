@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -41,5 +42,9 @@ public class ActionLog {
     @Column(name = "CREATE_DATE")
     @CreationTimestamp
     private LocalDateTime timestamp;
+
+    @Column(name = "LOG_DETAIL", length = 100000)
+    @Lob
+    private String logDetail;
 
 }

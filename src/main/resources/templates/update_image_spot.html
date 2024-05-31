@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="tr" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Gezilecek Yer | Galeri Yönetimi</title>
+  <link rel="stylesheet" href="/webjars/bootstrap/4.5.2/css/bootstrap.css"/>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="background-style">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top navbar-gradient">
+  <a class="navbar-brand navBarYazi" href="#">Cultural-Backend Admin Paneli</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarNav">
+    <ul class="navbar-nav ml-auto navBarYazi">
+      <li class="nav-item pr-2">
+        <a class="nav-link" href="/">Ana Sayfa <span class="sr-only">(current)</span></a>
+      </li>
+      <li class="nav-item pr-2">
+        <a class="nav-link" href="/artworks-list">Sanat Eserleri Yönetimi</a>
+      </li>
+      <li class="nav-item active pr-2">
+        <a class="nav-link" href="/touristic-spots-list">Gezilecek Yerler Yönetimi</a>
+      </li>
+      <li class="nav-item pr-2">
+        <a class="nav-link" href="#">Log Yönetimi</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link bg-danger font-weight-bold text-light rounded-pill border border-light px-4" href="#">Çıkış</a>
+      </li>
+    </ul>
+  </div>
+</nav>
+<div class="container">
+  <h1 class="baslik">Gezilecek Yer Yönetimi</h1>
+  <hr>
+  <h2 class="baslik">Fotoğraf Galerisi Yönetimi</h2>
+
+  <form action="#" th:action="@{/touristic-spots-list/updateSpotImages/{id}/addImages(id=${spot.id})}" method="POST"
+        enctype="multipart/form-data">
+    <div class="form-group">
+      <label for="image" class="text-label">Fotoğraf Seç:</label>
+      <input type="file" id="image" name="multipartFile" class="form-control-file text-label"/>
+    </div>
+    <button type="submit" class="btn btn-primary">Fotoğraf Ekle</button>
+
+    <input type="hidden" th:field="*{id}"/>
+
+    <div class="gallery-label">Galeri</div>
+
+    <hr>
+
+    <div class="row mt-5">
+      <div class="col-sm-12">
+        <div class="row">
+          <div th:each="fileData, index : ${spot.fileData}" class="col-md-4 mb-4">
+            <div class="card">
+              <img th:src="${'/files/' + fileData.name}" class="card-img-top" alt="Spot Image">
+              <div class="card-body">
+                <a class="btn btn-danger mt-2" onclick="deleteImage(this)"
+                   th:href="@{'/touristic-spots-list/' + ${spot.id} + '/deleteImage/' + ${fileData.id}}">Sil</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <hr>
+  <a th:href="@{/touristic-spots-list/showFormForUpdate/{id}(id=${spot.id})}" class="pb-4 text-white">Geri dön</a>
+</div>
+<script>
+  function deleteImage(button) {
+    if (confirm("Resmi silmek istediginize emin misiniz?")) {
+      window.location.href = button.getAttribute('href');
+    }
+  }
+</script>
+</body>
+</html>

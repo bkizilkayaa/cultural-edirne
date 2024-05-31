@@ -8,6 +8,7 @@ import com.bkizilkaya.culturelbackend.model.FileData;
 import com.bkizilkaya.culturelbackend.repo.FileDataRepository;
 import com.bkizilkaya.culturelbackend.service.abstraction.StorageService;
 import com.bkizilkaya.culturelbackend.utils.ImageValidator;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Log4j2
 public class FileDataServiceImpl implements StorageService {
     @Value("${local.file.path}")
     private String FOLDER_PATH;
@@ -40,20 +42,15 @@ public class FileDataServiceImpl implements StorageService {
 
     @Override
     public Long saveFile(MultipartFile multiPartFile) throws IOException {
-        if (!imageValidator.isImage(multiPartFile)) {
-            throw new ValidationException("not a valid image");
-        }
-        if (!imageValidator.isFileSizeValid(multiPartFile)) {
-            throw new ValidationException("Maximum file size reached : 10MB+");
-        }
+        validateImage(multiPartFile);
 
         String fileName = pathService.generateFileName(multiPartFile);
         String basePath = System.getProperty("user.dir") + FOLDER_PATH;
 
         checkFilePathAndCreateFoldersIfNotExists(basePath);
+
         Long fileId = saveFileDataToDatabase(multiPartFile, fileName);
         transferFile(multiPartFile, fileName, basePath);
-
         return fileId;
     }
 
@@ -98,12 +95,12 @@ public class FileDataServiceImpl implements StorageService {
 
     @Override
     public List<Long> findUnusedFilesId() {
-        return fileDataRepository.findUnusedFilesId().orElseThrow(() -> new RuntimeException("an error occured when fetching data from db"));
+        return fileDataRepository.findUnusedFilesId().orElseThrow(() -> new RuntimeException("an error occurred when fetching data from db"));
     }
 
     @Override
     public List<String> findUnusedFilesName() {
-        return fileDataRepository.findUnusedFilesName().orElseThrow(() -> new RuntimeException("an error occured when fetching data from db"));
+        return fileDataRepository.findUnusedFilesName().orElseThrow(() -> new RuntimeException("an error occurred when fetching data from db"));
     }
 
     protected FileData findById(Long fileId) {
@@ -111,4 +108,12 @@ public class FileDataServiceImpl implements StorageService {
                 .orElseThrow(() -> new NotFoundException(FileData.class));
     }
 
+    private void validateImage(MultipartFile multiPartFile) {
+        if (!imageValidator.isImage(multiPartFile)) {
+            throw new ValidationException("Eklenen dosyayı kontrol ediniz!");
+        }
+        if (!imageValidator.isFileSizeValid(multiPartFile)) {
+            throw new ValidationException("Maksimum dosya boyutuna ulaşıldı : 10MB+");
+        }
+    }
 }
