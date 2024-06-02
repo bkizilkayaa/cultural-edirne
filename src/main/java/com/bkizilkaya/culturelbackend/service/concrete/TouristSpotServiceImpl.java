@@ -57,18 +57,23 @@ public class TouristSpotServiceImpl implements TouristSpotService {
     }
 
     @Override
+    @Transactional
     public TouristSpotResponseDTO updateSpot(Long spotId, TouristSpotCreateDTO touristSpotCreateDto) {
         TouristSpot spotFromDb = getSpotGivenId(spotId);
 
+        updateSpotFields(touristSpotCreateDto, spotFromDb);
+
+        touristSpotRepository.save(spotFromDb);
+        return TouristSpotMapper.INSTANCE.entityToResponseDto(spotFromDb);
+    }
+
+    private void updateSpotFields(TouristSpotCreateDTO touristSpotCreateDto, TouristSpot spotFromDb) {
         spotFromDb.setContent(touristSpotCreateDto.getContent());
         spotFromDb.setTitle(touristSpotCreateDto.getTitle());
         spotFromDb.setDescription(touristSpotCreateDto.getDescription());
         spotFromDb.setModifiedDate(LocalDateTime.now());
         spotFromDb.setAuthorId(touristSpotCreateDto.getAuthorId());
         spotFromDb.setParentId(touristSpotCreateDto.getParentId());
-
-        touristSpotRepository.save(spotFromDb);
-        return TouristSpotMapper.INSTANCE.entityToResponseDto(spotFromDb);
     }
 
     @Override
