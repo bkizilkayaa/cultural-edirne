@@ -45,8 +45,7 @@
 
     <h2 class="altBaslik">Kayıt Bilgileri</h2>
     <hr>
-    <form action="#" th:action="@{/artworks-list/saveArtwork}" th:object="${artwork}" method="POST">
-
+    <form id="artworkFormUpdate" action="#" th:action="@{/artworks-list/saveArtwork}" th:object="${artwork}" method="POST">
         <input type="hidden" th:field="*{id}"/>
 
         <div class="form-group row">
@@ -107,7 +106,7 @@
         <hr>
         <div class="row">
             <div class="col-sm-6 text-right">
-                <button type="submit" class="btn btn-success col-12 mb-3 text-label">Kaydı Güncelle</button>
+                <button type="button" class="btn btn-success col-12 mb-3 text-label" data-toggle="modal" data-target="#confirmModal">Kaydı Güncelle</button>
             </div>
             <div class="col-sm-6 text-right">
                 <a th:href="@{'/artworks-list/updateArtworkImages/' + ${artwork.id}}" class="btn btn-info col-12 mb-3 text-label">Fotoğraf Galerisi Yönetimi</a>
@@ -117,6 +116,27 @@
     <hr>
     <a th:href="@{/artworks-list}" class="pb-4">Kayıt listesine geri dön</a>
 </div>
+
+<div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="confirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmModalLabel">Onay</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Kaydı güncellemek istediğinize emin misiniz?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">İptal</button>
+                <button type="button" class="btn btn-primary" id="confirmUpdateArtwork">Evet, Güncelle</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script src="/webjars/jquery/3.5.1/jquery.min.js"></script>
 <script src="/webjars/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <script src="/js/script.js"></script>

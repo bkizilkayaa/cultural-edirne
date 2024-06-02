@@ -28,3 +28,17 @@ window.onload = function() {
         }, 3000);
     }
 };
+$(document).ready(function() {
+    $('#confirmSaveArtwork').click(function() {
+        $('#artworkForm').submit();
+    });
+    $('#confirmSaveSpot').click(function() {
+        $('#spotForm').submit();
+    });
+    $('#confirmUpdateArtwork').click(function() {
+        $('#artworkFormUpdate').submit();
+    });
+    $('#confirmUpdateSpot').click(function() {
+        $('#spotFormUpdate').submit();
+    });
+});
