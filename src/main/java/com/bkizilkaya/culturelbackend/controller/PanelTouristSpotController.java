@@ -10,7 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -163,6 +162,18 @@ public class PanelTouristSpotController {
         model.addAttribute("touristicSpots", listOfSpots);
         model.addAttribute("title", title);
         return "touristic_spots";
+    }
+
+    @GetMapping("/{spotId}/deleteImage/{fileId}")
+    public String deleteImage(@PathVariable("spotId") Long spotId, @PathVariable("fileId") Long fileId, Model model, RedirectAttributes redirectAttributes) {
+        try {
+            touristSpotService.removeSpotImageFromSpot(spotId, fileId);
+            redirectAttributes.addFlashAttribute("successMessage", "Resim başarıyla silindi!");
+            return "redirect:/touristic-spots-list/showFormForUpdate/" + spotId;
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", e.getMessage());
+            return "error";
+        }
     }
 
 }
