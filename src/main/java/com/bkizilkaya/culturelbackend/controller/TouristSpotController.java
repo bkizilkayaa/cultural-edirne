@@ -4,6 +4,7 @@ import com.bkizilkaya.culturelbackend.dto.filedata.response.FileDataResponseDTO;
 import com.bkizilkaya.culturelbackend.dto.spot.request.TouristSpotCreateDTO;
 import com.bkizilkaya.culturelbackend.dto.spot.response.TouristSpotResponseDTO;
 import com.bkizilkaya.culturelbackend.service.concrete.TouristSpotServiceImpl;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -38,6 +39,13 @@ public class TouristSpotController {
         return ResponseEntity.status(OK).body(touristSpotService.getAllTouristicSpot());
     }
 
+    @GetMapping("/page/{pageNum}")
+    public ResponseEntity<Page<TouristSpotResponseDTO>> getSpotsPaginated(@PathVariable String pageNum) {
+        int pageNumParsed = Integer.parseInt(pageNum);
+        Page<TouristSpotResponseDTO> paginated = touristSpotService.findPaginated(pageNumParsed, 5);
+        return new ResponseEntity<>(paginated, OK);
+    }
+
     @GetMapping("/{spotId}/images")
     public ResponseEntity<List<FileDataResponseDTO>> getSpotImages(@PathVariable Long spotId) {
         List<FileDataResponseDTO> fileDataList = touristSpotService.getSpotById(spotId).getFileData();
@@ -55,6 +63,14 @@ public class TouristSpotController {
     public ResponseEntity<TouristSpotResponseDTO> addSpot(@RequestBody TouristSpotCreateDTO touristSpotCreateDTO) {
         TouristSpotResponseDTO touristSpotResponseDTO = touristSpotService.addSpot(touristSpotCreateDTO);
         return ResponseEntity.status(CREATED).body(touristSpotResponseDTO);
+    }
+
+    @PostMapping("/save-multiple")
+    public ResponseEntity<String> addSpotList(@RequestBody List<TouristSpotCreateDTO> spots) {
+        for (TouristSpotCreateDTO spot : spots) {
+            touristSpotService.addSpot(spot);
+        }
+        return new ResponseEntity<>("Objects created successfully", CREATED);
     }
 
     @GetMapping("/{spotId}")
