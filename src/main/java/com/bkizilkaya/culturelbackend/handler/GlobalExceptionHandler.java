@@ -3,6 +3,7 @@ package com.bkizilkaya.culturelbackend.handler;
 import com.bkizilkaya.culturelbackend.exception.CustomErrorResponse;
 import com.bkizilkaya.culturelbackend.exception.NotFoundException;
 import com.bkizilkaya.culturelbackend.exception.ValidationException;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.context.MessageSource;
@@ -22,6 +23,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @ControllerAdvice
@@ -48,6 +50,14 @@ public class GlobalExceptionHandler {
         log.error(ex.getObjectType() + " not found!");
         return new ResponseEntity<>(errorResponse, NOT_FOUND);
     }
+
+    @ExceptionHandler(value = {JsonProcessingException.class})
+    public ResponseEntity<CustomErrorResponse> handleCustomException(JsonProcessingException ex) {
+        CustomErrorResponse errorResponse = customErrorResponseBuilder(INTERNAL_SERVER_ERROR, ex.getMessage());
+        log.error("an error occurred when json parsing!");
+        return new ResponseEntity<>(errorResponse, INTERNAL_SERVER_ERROR);
+    }
+
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<CustomErrorResponse> handleValidationErrors(MethodArgumentNotValidException ex) {

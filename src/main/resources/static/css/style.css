@@ -83,6 +83,10 @@ tr p {
 .background-style{
     background-color: rgba(54, 64, 75, 1)!important;
 }
+.modal-body-custom {
+    max-height: calc(300vh - 300px);
+    overflow-y: auto;
+}
 .success-message {
     position: fixed;
     font-size: 20px;

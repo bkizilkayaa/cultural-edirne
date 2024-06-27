@@ -1,6 +1,5 @@
 package com.bkizilkaya.culturelbackend.controller;
 
-import com.bkizilkaya.culturelbackend.service.concrete.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
