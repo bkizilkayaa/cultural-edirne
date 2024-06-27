@@ -33,6 +33,12 @@ tr p {
     max-height: 220px !important;
     overflow: hidden;
 }
+.error-message-login {
+    text-align: center;
+    color: white;
+    font-size: 24px;
+    margin-top: 10px;
+}
 .container-table {
     margin: 0 auto;
     width: 99%;
