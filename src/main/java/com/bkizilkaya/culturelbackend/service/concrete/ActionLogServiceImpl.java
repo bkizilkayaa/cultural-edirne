@@ -1,14 +1,13 @@
 package com.bkizilkaya.culturelbackend.service.concrete;
 
 import com.bkizilkaya.culturelbackend.dto.actionlog.ActionLogDTO;
-import com.bkizilkaya.culturelbackend.dto.spot.response.TouristSpotResponseDTO;
 import com.bkizilkaya.culturelbackend.mapper.ActionLogMapper;
-import com.bkizilkaya.culturelbackend.mapper.TouristSpotMapper;
 import com.bkizilkaya.culturelbackend.model.ActionEnum;
 import com.bkizilkaya.culturelbackend.model.ActionLog;
 import com.bkizilkaya.culturelbackend.model.TableNameEnum;
 import com.bkizilkaya.culturelbackend.repo.ActionLogRepository;
 import com.bkizilkaya.culturelbackend.service.abstraction.ActionLogService;
+import com.bkizilkaya.culturelbackend.utils.UserUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -33,11 +32,11 @@ public class ActionLogServiceImpl implements ActionLogService {
         return this.actionLogRepository.findAll(pageable).map(ActionLogMapper.INSTANCE::entityToDto);
     }
 
-    protected ActionLog actionLogBuilder(ActionEnum actionEnum, String tableName, String jsonObject){
+    protected ActionLog actionLogBuilder(ActionEnum actionEnum, String tableName, String jsonObject) {
         return ActionLog.builder().action(actionEnum.getAction())
                 .tableName(tableName)
                 .logDetail(jsonObject)
-                //.user() bu satırda da hangi user olduğunu geçicem.
+                .user(UserUtils.getCurrentUsername() != null ? UserUtils.getCurrentUsername() : "-")
                 .build();
     }
 }

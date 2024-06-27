@@ -1,9 +1,10 @@
 package com.bkizilkaya.culturelbackend.dto.actionlog;
 
+import com.bkizilkaya.culturelbackend.configuration.CustomLocalDateTimeSerializer;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import jakarta.persistence.Lob;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,6 +13,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Getter
 @Setter
@@ -34,8 +36,10 @@ public class ActionLogDTO {
     private LocalDateTime timestamp;
     @Lob
     private String logDetail;
-
-    public String getBeautifyLogDetail() throws JsonProcessingException {
-        return objectMapper.writeValueAsString(this.logDetail);
+    public String getFormattedDate(LocalDateTime ldt) {
+        if (ldt != null) {
+            return ldt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        }
+        return "-";
     }
 }

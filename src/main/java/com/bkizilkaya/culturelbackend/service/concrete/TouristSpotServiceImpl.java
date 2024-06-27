@@ -4,10 +4,14 @@ import com.bkizilkaya.culturelbackend.dto.spot.request.TouristSpotCreateDTO;
 import com.bkizilkaya.culturelbackend.dto.spot.response.TouristSpotResponseDTO;
 import com.bkizilkaya.culturelbackend.exception.NotFoundException;
 import com.bkizilkaya.culturelbackend.mapper.TouristSpotMapper;
+import com.bkizilkaya.culturelbackend.model.ActionEnum;
 import com.bkizilkaya.culturelbackend.model.FileData;
+import com.bkizilkaya.culturelbackend.model.TableNameEnum;
 import com.bkizilkaya.culturelbackend.model.TouristSpot;
 import com.bkizilkaya.culturelbackend.repo.TouristSpotRepository;
 import com.bkizilkaya.culturelbackend.service.abstraction.TouristSpotService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -26,11 +30,15 @@ import java.util.stream.Collectors;
 public class TouristSpotServiceImpl implements TouristSpotService {
     private final TouristSpotRepository touristSpotRepository;
     private final FileDataServiceImpl fileDataService;
+    private final ActionLogServiceImpl actionLogService;
+
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
 
-    public TouristSpotServiceImpl(TouristSpotRepository touristSpotRepository, FileDataServiceImpl fileDataService) {
+    public TouristSpotServiceImpl(TouristSpotRepository touristSpotRepository, FileDataServiceImpl fileDataService, ActionLogServiceImpl actionLogService) {
         this.touristSpotRepository = touristSpotRepository;
         this.fileDataService = fileDataService;
+        this.actionLogService = actionLogService;
     }
 
 
@@ -41,6 +49,8 @@ public class TouristSpotServiceImpl implements TouristSpotService {
         }
         TouristSpot touristSpot = TouristSpotMapper.INSTANCE.dtoToEntity(touristSpotCreateDto);
         touristSpotRepository.save(touristSpot);
+        String mappedObject = getJsonObject(touristSpot);
+        actionLogService.createLog(ActionEnum.ADD, TableNameEnum.TOURIST_SPOT, mappedObject);
         return TouristSpotMapper.INSTANCE.entityToResponseDto(touristSpot);
     }
 
@@ -64,6 +74,8 @@ public class TouristSpotServiceImpl implements TouristSpotService {
         updateSpotFields(touristSpotCreateDto, spotFromDb);
 
         touristSpotRepository.save(spotFromDb);
+        String mappedObject = getJsonObject(spotFromDb);
+        actionLogService.createLog(ActionEnum.UPDATE, TableNameEnum.TOURIST_SPOT, mappedObject);
         return TouristSpotMapper.INSTANCE.entityToResponseDto(spotFromDb);
     }
 
@@ -80,6 +92,8 @@ public class TouristSpotServiceImpl implements TouristSpotService {
     public void deleteSpot(Long spotId) {
         TouristSpot spotFromDb = getSpotGivenId(spotId);
         touristSpotRepository.deleteById(spotId);
+        String mappedObject = getJsonObject(spotFromDb);
+        actionLogService.createLog(ActionEnum.DELETE, TableNameEnum.TOURIST_SPOT, mappedObject);
     }
 
     @Override
@@ -97,6 +111,8 @@ public class TouristSpotServiceImpl implements TouristSpotService {
 
             fileDataFromDb.setTouristSpotImages(null);
         }
+        String mappedObject = getJsonObject(touristSpot);
+        actionLogService.createLog(ActionEnum.DELETE, TableNameEnum.TOURIST_SPOT_IMAGES, mappedObject);
     }
 
     @Override
@@ -109,9 +125,12 @@ public class TouristSpotServiceImpl implements TouristSpotService {
 
             fileData.setTouristSpotImages(touristSpot);
             touristSpot.getFileData().add(fileData);
+            String mappedObject = getJsonObject(touristSpot);
+            actionLogService.createLog(ActionEnum.ADD, TableNameEnum.TOURIST_SPOT_IMAGES, mappedObject);
         } catch (IOException e) {
             throw new RuntimeException(e.getMessage());
         }
+
         return spotId;
     }
 
@@ -135,5 +154,16 @@ public class TouristSpotServiceImpl implements TouristSpotService {
                 .collect(Collectors.toList());
 
         return new PageImpl<>(spotDtos, pageable, spots.getTotalElements());
+    }
+
+    private String getJsonObject(TouristSpot touristSpot) {
+        TouristSpotResponseDTO touristSpotResponseDTO = TouristSpotMapper.INSTANCE.entityToResponseDto(touristSpot);
+        String mappedObject;
+        try {
+            mappedObject = objectMapper.writeValueAsString(touristSpotResponseDTO);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+        return mappedObject;
     }
 }

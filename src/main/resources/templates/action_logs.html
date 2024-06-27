@@ -56,9 +56,10 @@
         <thead class="thead-dark">
         <tr>
           <th>ID</th>
-          <th>İşlem</th>
+          <th>Aksiyon</th>
           <th>Tablo Adı</th>
-          <th>Timestamp</th>
+          <th>İşlem Zamanı</th>
+          <th>Gerçekleştiren Kullanıcı</th>
           <th>Detay</th>
         </tr>
         </thead>
@@ -67,7 +68,8 @@
           <td th:text="${log.id}">ID</td>
           <td th:text="${log.action}">Action Type</td>
           <td th:text="${log.tableName}">Tablo Adı</td>
-          <td th:text="${log.timestamp}">Timestamp</td>
+          <td th:text="${log.getFormattedDate(log.timestamp)}">Timestamp</td>
+          <td th:text="${log.user}">Timestamp</td>
           <td>
             <button type="button" class="btn btn-info" th:attr="data-toggle='modal', data-target='#logDetailModal' + ${log.id}">
               Detay
