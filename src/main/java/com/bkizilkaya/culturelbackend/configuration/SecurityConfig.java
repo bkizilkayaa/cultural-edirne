@@ -1,7 +1,6 @@
 package com.bkizilkaya.culturelbackend.configuration;
 
 import com.bkizilkaya.culturelbackend.service.concrete.CustomUserDetailsService;
-import com.bkizilkaya.culturelbackend.service.concrete.UserServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -28,7 +27,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(authorizeRequests -> authorizeRequests
-                        .requestMatchers( "/webjars/**", "/css/**", "/js/**", "/images/**", "/resources/**", "/files/**").permitAll()
+                        .requestMatchers("/webjars/**", "/css/**", "/js/**", "/images/**", "/resources/**", "/files/**", "/artworks/**", "/touristic-spots/**").permitAll()
                         .requestMatchers("/login").anonymous()
                         .anyRequest().authenticated())
                 .formLogin(form -> form
