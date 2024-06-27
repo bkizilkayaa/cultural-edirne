@@ -7,11 +7,10 @@
   <title>Gezilecek Yerler Listesi</title>
   <link rel="stylesheet" href="/webjars/bootstrap/4.5.2/css/bootstrap.css">
   <link rel="stylesheet" href="/css/style.css">
-  <script src="/js/script.js"></script>
 </head>
 <body class="background-style">
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top navbar-gradient">
-  <a class="navbar-brand navBarYazi" href="#">Cultural-Backend Admin Paneli</a>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark py-3 fixed-top navbar-gradient">
+  <a class="navbar-brand navbarBaslik" href="/">Cultural-Backend Admin Paneli</a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
@@ -23,14 +22,14 @@
       <li class="nav-item pr-2">
         <a class="nav-link" href="/artworks-list">Sanat Eserleri Yönetimi</a>
       </li>
-      <li class="nav-item active pr-2">
+      <li class="nav-item pr-2 active">
         <a class="nav-link" href="/touristic-spots-list">Gezilecek Yerler Yönetimi</a>
       </li>
       <li class="nav-item pr-2">
-        <a class="nav-link" href="#">Log Yönetimi</a>
+        <a class="nav-link" href="/actions">Log Yönetimi</a>
       </li>
-      <li class="nav-item">
-        <a class="nav-link bg-danger font-weight-bold text-light rounded-pill border border-light px-4" href="#">Çıkış</a>
+      <li class="nav-item d-flex align-items-center ml-2">
+        <a class="nav-link bg-danger text-light rounded border border-light px-2 py-1" href="/logout">Çıkış</a>
       </li>
     </ul>
   </div>
@@ -89,9 +88,8 @@
           <td th:text="${spot.getFormattedDate(spot.createDate)}" style="white-space: nowrap;">Oluşturulma Tarihi</td>
           <td th:text="${spot.getFormattedDate(spot.modifiedDate)}" style="white-space: nowrap;">Güncelleme Tarihi</td>
           <td>
-            <div th:if="${spot.fileData != null and spot.fileData.size() > 0}">
-              <img th:src="${'/files/' + spot.fileData[0].name}" alt="Spot Image" height="80px"
-                   width="200px"/>
+            <div th:if="${spot.fileData != null and spot.fileData.size() > 0}" class="img-div-show">
+              <img th:src="${'/files/' + spot.fileData[0].name}" alt="Spot Image" class="img-show"/>
             </div>
             <div th:unless="${spot.fileData != null and spot.fileData.size() > 0}" style="white-space: nowrap;">
               <p>Görsel eklenmemiş.</p>
@@ -105,9 +103,9 @@
               <a th:href="@{/touristic-spots-list/updateSpotImages/{id}(id=${spot.id})}" class="btn mb-1">
                 <img src="/logo/gallery.png" style="width: 50px" height="49px"/>
               </a>
-              <a th:href="@{/touristic-spots-list/deleteSpot/{id}(id=${spot.id})}" class="btn mb-1" onclick="deleteRecord(this)">
+              <button type="button" class="btn mb-1" th:data-toggle="modal" th:data-target="'#modal-warning-' + ${spot.id}">
                 <img src="/logo/delete.jpg" style="width: 50px" height="49px"/>
-              </a>
+              </button>
             </div>
           </td>
         </tr>
@@ -117,21 +115,42 @@
 
     <div th:if="${totalPages > 1}" class="d-flex justify-content-center pb-3">
       <div>
-        <a th:if="${currentPage > 1}" th:href="@{'/touristic-spots-list/page/' + ${currentPage - 1}}"
-           class="btn btn-dark mr-1">Önceki</a>
+        <a th:if="${currentPage > 1}" th:href="@{'/touristic-spots-list/search?title=' + ${title} + '&pageNo=' + ${currentPage - 1}}" class="btn btn-dark mr-1">Önceki</a>
         <span th:each="i: ${#numbers.sequence(1, totalPages)}">
-                <a th:if="${currentPage != i}" th:href="@{'/touristic-spots-list/page/' + ${i}}" class="btn btn-secondary mr-1">[[${i}]]</a>
-                <span th:unless="${currentPage != i}" class="btn btn-primary mr-1">[[${i}]]</span>
-            </span>
-        <a th:if="${currentPage < totalPages}" th:href="@{'/touristic-spots-list/page/' + ${currentPage + 1}}"
-           class="btn btn-dark mr-1">Sonraki</a>
-        <a th:if="${currentPage < totalPages}" th:href="@{'/touristic-spots-list/' + ${totalPages}}"
-           class="btn btn-dark">Son</a>
+                    <a th:if="${currentPage != i}" th:href="@{'/touristic-spots-list/search?title=' + ${title} + '&pageNo=' + ${i}}" class="btn btn-secondary mr-1">[[${i}]]</a>
+                    <span th:unless="${currentPage != i}" class="btn btn-primary mr-1">[[${i}]]</span>
+                </span>
+        <a th:if="${currentPage < totalPages}" th:href="@{'/touristic-spots-list/search?title=' + ${title} + '&pageNo=' + ${currentPage + 1}}" class="btn btn-dark mr-1">Sonraki</a>
       </div>
     </div>
 
-
   </div>
 </div>
+
+<div th:each="spot : ${touristicSpots}">
+  <div class="modal modal-warning fade" th:id="'modal-warning-' + ${spot.id}" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Kayıt Sil</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <h3>Kaydı silmek istediğinize emin misiniz?</h3>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Kapat</button>
+          <a th:href="@{/touristic-spots-list/deleteSpot/{id}(id=${spot.id})}" class="btn btn-outline-danger"><i class="fa fa-check"></i>&nbsp;Evet, sil</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/webjars/jquery/3.5.1/jquery.min.js"></script>
+<script src="/webjars/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="/js/script.js"></script>
 </body>
 </html>

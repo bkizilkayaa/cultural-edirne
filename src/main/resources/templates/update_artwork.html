@@ -5,11 +5,10 @@
     <title>Sanat Eseri | Güncelleme Ekranı</title>
     <link rel="stylesheet" href="/webjars/bootstrap/4.5.2/css/bootstrap.css"/>
     <link rel="stylesheet" href="/css/style.css">
-    <script src="/js/script.js"></script>
 </head>
 <body class="background-style">
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top navbar-gradient">
-    <a class="navbar-brand navBarYazi" href="#">Cultural-Backend Admin Paneli</a>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark py-3 fixed-top navbar-gradient">
+    <a class="navbar-brand navbarBaslik" href="/">Cultural-Backend Admin Paneli</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
@@ -25,10 +24,10 @@
                 <a class="nav-link" href="/touristic-spots-list">Gezilecek Yerler Yönetimi</a>
             </li>
             <li class="nav-item pr-2">
-                <a class="nav-link" href="#">Log Yönetimi</a>
+                <a class="nav-link" href="/actions">Log Yönetimi</a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link bg-danger font-weight-bold text-light rounded-pill border border-light px-4" href="#">Çıkış</a>
+            <li class="nav-item d-flex align-items-center ml-2">
+                <a class="nav-link bg-danger text-light rounded border border-light px-2 py-1" href="/logout">Çıkış</a>
             </li>
         </ul>
     </div>
@@ -46,8 +45,7 @@
 
     <h2 class="altBaslik">Kayıt Bilgileri</h2>
     <hr>
-    <form action="#" th:action="@{/artworks-list/saveArtwork}" th:object="${artwork}" method="POST">
-
+    <form id="artworkFormUpdate" action="#" th:action="@{/artworks-list/saveArtwork}" th:object="${artwork}" method="POST">
         <input type="hidden" th:field="*{id}"/>
 
         <div class="form-group row">
@@ -108,7 +106,7 @@
         <hr>
         <div class="row">
             <div class="col-sm-6 text-right">
-                <button type="submit" class="btn btn-success col-12 mb-3 text-label">Kaydı Güncelle</button>
+                <button type="button" class="btn btn-success col-12 mb-3 text-label" data-toggle="modal" data-target="#confirmModal">Kaydı Güncelle</button>
             </div>
             <div class="col-sm-6 text-right">
                 <a th:href="@{'/artworks-list/updateArtworkImages/' + ${artwork.id}}" class="btn btn-info col-12 mb-3 text-label">Fotoğraf Galerisi Yönetimi</a>
@@ -118,5 +116,29 @@
     <hr>
     <a th:href="@{/artworks-list}" class="pb-4">Kayıt listesine geri dön</a>
 </div>
+
+<div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="confirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmModalLabel">Onay</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Kaydı güncellemek istediğinize emin misiniz?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">İptal</button>
+                <button type="button" class="btn btn-primary" id="confirmUpdateArtwork">Evet, Güncelle</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/webjars/jquery/3.5.1/jquery.min.js"></script>
+<script src="/webjars/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="/js/script.js"></script>
 </body>
 </html>

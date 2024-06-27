@@ -33,6 +33,12 @@ tr p {
     max-height: 220px !important;
     overflow: hidden;
 }
+.error-message-login {
+    text-align: center;
+    color: white;
+    font-size: 24px;
+    margin-top: 10px;
+}
 .container-table {
     margin: 0 auto;
     width: 99%;
@@ -57,6 +63,15 @@ tr p {
 .baslik{
     color: white;
 }
+.navbarBaslik{
+    color: white;
+    font-size: 21px;
+    letter-spacing: 1px;
+    text-decoration: none solid rgb(68, 68, 68);
+    font-style: normal;
+    font-variant: small-caps;
+    text-transform: uppercase;
+}
 .altBaslik{
     color: white;
 }
@@ -77,6 +92,13 @@ tr p {
 .background-style{
     background-color: rgba(54, 64, 75, 1)!important;
 }
+.background-style-home-page{
+    background-color: rgb(67, 78, 91) !important;
+}
+.modal-body-custom {
+    max-height: calc(300vh - 300px);
+    overflow-y: auto;
+}
 .success-message {
     position: fixed;
     font-size: 20px;
@@ -91,7 +113,43 @@ tr p {
     text-align: center;
     z-index: 1000;
 }
-
+.jumbotron {
+    background: linear-gradient(45deg, #74757a, #212529);
+    color: white;
+    padding: 4rem 2rem;
+    border-radius: 1rem;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+.jumbotron h1, .jumbotron p {
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 1);
+}
+.feature-card .card {
+    transition: transform 0.3s ease;
+    border-radius: 1rem;
+}
+.feature-card .card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 4px 8px rgba(87, 49, 49, 0.2);
+}
+.feature-card .card-body {
+    display: flex;
+    align-items: center;
+    background-color: #c0c4c0;
+    border-radius: inherit;
+}
+.feature-card .card-body i {
+    font-size: 2.5rem;
+    margin-right: 1rem;
+}
+.img-show{
+    object-fit: contain;
+    height: auto;
+    width: 190px;
+}
+.img-div-show{
+    display: flex;
+    justify-content: center;
+}
 ::-webkit-scrollbar {
     width: 12px;
 }

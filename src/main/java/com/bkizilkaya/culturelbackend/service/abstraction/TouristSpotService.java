@@ -24,4 +24,6 @@ public interface TouristSpotService {
     Long addImageToSpot(Long spotId, MultipartFile file);
 
     Page<TouristSpotResponseDTO> findPaginated(int pageNo, int pageSize);
+
+    Page<TouristSpotResponseDTO> searchSpotsPaginated(String title, int pageNo, int pageSize);
 }

@@ -7,8 +7,8 @@
   <link rel="stylesheet" href="/css/style.css">
 </head>
 <body class="background-style">
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top navbar-gradient">
-  <a class="navbar-brand navBarYazi" href="#">Cultural-Backend Admin Paneli</a>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark py-3 fixed-top navbar-gradient">
+  <a class="navbar-brand navbarBaslik" href="/">Cultural-Backend Admin Paneli</a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
@@ -20,14 +20,14 @@
       <li class="nav-item pr-2">
         <a class="nav-link" href="/artworks-list">Sanat Eserleri Yönetimi</a>
       </li>
-      <li class="nav-item active pr-2">
+      <li class="nav-item pr-2 active">
         <a class="nav-link" href="/touristic-spots-list">Gezilecek Yerler Yönetimi</a>
       </li>
       <li class="nav-item pr-2">
-        <a class="nav-link" href="#">Log Yönetimi</a>
+        <a class="nav-link" href="/actions">Log Yönetimi</a>
       </li>
-      <li class="nav-item">
-        <a class="nav-link bg-danger font-weight-bold text-light rounded-pill border border-light px-4" href="#">Çıkış</a>
+      <li class="nav-item d-flex align-items-center ml-2">
+        <a class="nav-link bg-danger text-light rounded border border-light px-2 py-1" href="/logout">Çıkış</a>
       </li>
     </ul>
   </div>
@@ -58,8 +58,7 @@
             <div class="card">
               <img th:src="${'/files/' + fileData.name}" class="card-img-top" alt="Spot Image">
               <div class="card-body">
-                <a class="btn btn-danger mt-2" onclick="deleteImage(this)"
-                   th:href="@{'/touristic-spots-list/' + ${spot.id} + '/deleteImage/' + ${fileData.id}}">Sil</a>
+                <a class="btn btn-danger mt-2" th:data-toggle="modal" th:data-target="'#modal-warning-' + ${fileData.id}">Sil</a>
               </div>
             </div>
           </div>
@@ -71,12 +70,31 @@
   <hr>
   <a th:href="@{/touristic-spots-list/showFormForUpdate/{id}(id=${spot.id})}" class="pb-4 text-white">Geri dön</a>
 </div>
-<script>
-  function deleteImage(button) {
-    if (confirm("Resmi silmek istediginize emin misiniz?")) {
-      window.location.href = button.getAttribute('href');
-    }
-  }
-</script>
+
+<div th:each="fileData, index : ${spot.fileData}" class="col-md-4 mb-4">
+  <div class="modal modal-warning fade" th:id="'modal-warning-' + ${fileData.id}" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Kayıt Sil</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <h3>Kaydı silmek istediğinize emin misiniz?</h3>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-light" data-dismiss="modal">Kapat</button>
+          <a th:href="@{'/touristic-spots-list/' + ${spot.id} + '/deleteImage/' + ${fileData.id}}" class="btn btn-danger"><i class="fa fa-check"></i>&nbsp;Evet, sil</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/webjars/jquery/3.5.1/jquery.min.js"></script>
+<script src="/webjars/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="/js/script.js"></script>
 </body>
 </html>

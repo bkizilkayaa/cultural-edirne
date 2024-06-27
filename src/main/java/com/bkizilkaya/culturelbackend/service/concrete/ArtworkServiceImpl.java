@@ -69,6 +69,7 @@ public class ArtworkServiceImpl implements ArtworkService {
     }
 
     @Override
+    @Transactional
     public ArtworkResponseDTO updateArtwork(Long oldArtworkId, ArtworkCreateDTO newArtworkDto) {
         Artwork artworkFromDb = getArtworkById(oldArtworkId);
         updateArtworkField(newArtworkDto, artworkFromDb);

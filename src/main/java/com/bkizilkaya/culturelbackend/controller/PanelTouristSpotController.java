@@ -1,6 +1,5 @@
 package com.bkizilkaya.culturelbackend.controller;
 
-import com.bkizilkaya.culturelbackend.dto.artwork.request.ArtworkCreateDTO;
 import com.bkizilkaya.culturelbackend.dto.spot.request.TouristSpotCreateDTO;
 import com.bkizilkaya.culturelbackend.dto.spot.response.TouristSpotResponseDTO;
 import com.bkizilkaya.culturelbackend.service.abstraction.TouristSpotService;
@@ -16,6 +15,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -34,6 +35,7 @@ public class PanelTouristSpotController {
 
     @GetMapping()
     public String touristicPanel(Model model) {
+        model.addAttribute("title", "");
         return findPaginated(1, model);
     }
 
@@ -47,6 +49,7 @@ public class PanelTouristSpotController {
         redirectAttributes.addFlashAttribute("successMessage", "Kayıt başarıyla eklendi!");
         return "redirect:/touristic-spots-list";
     }
+
     @GetMapping("/showNewSpotForm")
     public String showNewSpotForm(Model model) {
         TouristSpotCreateDTO touristSpotCreateDTO = new TouristSpotCreateDTO();
@@ -93,8 +96,9 @@ public class PanelTouristSpotController {
             return "error";
         }
     }
+
     @GetMapping("/updateSpotImages/{id}")
-    public String updateArtworkImages(@PathVariable(value = "id") Long id, Model model) {
+    public String updateSpotImages(@PathVariable(value = "id") Long id, Model model) {
         try {
             TouristSpotResponseDTO touristSpotResponseDTO = touristSpotService.getSpotById(id);
 
@@ -106,6 +110,7 @@ public class PanelTouristSpotController {
             return "error";
         }
     }
+
     @PostMapping("/updateSpotImages/{id}/addImages")
     public String addImagesToSpot(@PathVariable(value = "id") Long id, Model model, MultipartFile multipartFile, RedirectAttributes redirectAttributes) {
         try {
@@ -119,7 +124,8 @@ public class PanelTouristSpotController {
             return "error";
         }
     }
-    @GetMapping("/deleteSpot/{id}")
+
+    @RequestMapping(value = "/deleteSpot/{id}", method = {RequestMethod.DELETE, RequestMethod.GET})
     public String deleteSpot(@PathVariable(value = "id") Long id, RedirectAttributes redirectAttributes) {
         this.touristSpotService.deleteSpot(id);
         redirectAttributes.addFlashAttribute("successMessage", "Kayıt silindi!");
@@ -145,5 +151,29 @@ public class PanelTouristSpotController {
         }
     }
 
+    @GetMapping("/search")
+    public String searchSpots(@RequestParam("title") String title, @RequestParam(defaultValue = "1") int pageNo, Model model) {
+        int pageSize = 5;
+        Page<TouristSpotResponseDTO> page = touristSpotService.searchSpotsPaginated(title, pageNo, pageSize);
+        List<TouristSpotResponseDTO> listOfSpots = page.getContent();
+        model.addAttribute("currentPage", pageNo);
+        model.addAttribute("totalPages", page.getTotalPages());
+        model.addAttribute("totalItems", page.getTotalElements());
+        model.addAttribute("touristicSpots", listOfSpots);
+        model.addAttribute("title", title);
+        return "touristic_spots";
+    }
+
+    @GetMapping("/{spotId}/deleteImage/{fileId}")
+    public String deleteImage(@PathVariable("spotId") Long spotId, @PathVariable("fileId") Long fileId, Model model, RedirectAttributes redirectAttributes) {
+        try {
+            touristSpotService.removeSpotImageFromSpot(spotId, fileId);
+            redirectAttributes.addFlashAttribute("successMessage", "Resim başarıyla silindi!");
+            return "redirect:/touristic-spots-list/showFormForUpdate/" + spotId;
+        } catch (Exception e) {
+            model.addAttribute("errorMessage", e.getMessage());
+            return "error";
+        }
+    }
 
 }

@@ -49,8 +49,8 @@ public class ArtworkController {
 
     @GetMapping("/{artworkId}/images")
     public ResponseEntity<List<FileDataResponseDTO>> getArtworkImage(@PathVariable Long artworkId) {
-        List<FileDataResponseDTO> fileDataList = artworkService.getArtworkGivenId(artworkId).getFileData();
-        return new ResponseEntity<>(fileDataList, OK);
+        List<FileDataResponseDTO> fileDataResponseDTOS = artworkService.getArtworkGivenId(artworkId).getFileData();
+        return new ResponseEntity<>(fileDataResponseDTOS, OK);
     }
 
     @PostMapping("/{artworkId}/images")
@@ -67,8 +67,8 @@ public class ArtworkController {
     }
 
     @PostMapping("/save-multiple")
-    public ResponseEntity<String> addArtworkList(@RequestBody List<ArtworkCreateDTO> newArtworkList) {
-        for (ArtworkCreateDTO artwork : newArtworkList) {
+    public ResponseEntity<String> addArtworkList(@RequestBody List<ArtworkCreateDTO> artworks) {
+        for (ArtworkCreateDTO artwork : artworks) {
             artworkService.addArtwork(artwork);
         }
         return new ResponseEntity<>("Objects created successfully", CREATED);

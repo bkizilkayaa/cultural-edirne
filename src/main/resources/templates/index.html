@@ -10,16 +10,18 @@
     <title>Admin Paneli</title>
     <link rel="stylesheet" href="/webjars/bootstrap/4.5.2/css/bootstrap.css"/>
     <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-PLbXyb3cQDXkYX7P9pP96t8Q68EwA1wZ5up5P0BOYrVS6DrFjsDEECeU5/vjF9XK5v8E5c9Sc4S7DLXwhod4g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 </head>
-<body>
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top navbar-gradient">
-    <a class="navbar-brand navBarYazi" href="#">Cultural-Backend Admin Paneli</a>
+<body class="background-style-home-page">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark py-3 fixed-top navbar-gradient">
+    <a class="navbar-brand navbarBaslik" href="/">Cultural-Backend Admin Paneli</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ml-auto navBarYazi">
-            <li class="nav-item active pr-2">
+            <li class="nav-item pr-2 active">
                 <a class="nav-link" href="/">Ana Sayfa <span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item pr-2">
@@ -29,21 +31,66 @@
                 <a class="nav-link" href="/touristic-spots-list">Gezilecek Yerler Yönetimi</a>
             </li>
             <li class="nav-item pr-2">
-                <a class="nav-link" href="#">Log Yönetimi</a>
+                <a class="nav-link" href="/actions">Log Yönetimi</a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link bg-danger font-weight-bold text-light rounded-pill border border-light px-4" href="#">Çıkış</a>
+            <li class="nav-item d-flex align-items-center ml-2">
+                <a class="nav-link bg-danger text-light rounded border border-light px-2 py-1" href="/logout">Çıkış</a>
             </li>
         </ul>
     </div>
 </nav>
 
-<div class="container">
-    <h1>Admin Paneli</h1>
-    <p th:text="' Thymeleaf ile oluşturulmuş admin paneline hoş geldiniz!'"></p>
-    <p>Admin paneline erişmek için
-        <a th:href="@{/admin}">buraya</a> tıklayın.
-    </p>
+<div class="container mt-5 pt-5">
+    <div class="jumbotron text-center">
+        <h1 class="display-4">Admin Paneline Hoş Geldiniz!</h1>
+        <p class="lead">Cultural-Backend admin panelinde tüm içeriklerinizi yönetebilirsiniz.</p>
+        <hr class="my-4">
+        <p>Daha fazla bilgi almak veya yardım almak için aşağıdaki bölümleri kullanabilirsiniz.</p>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4 feature-card">
+            <div class="card bg-light">
+                <div class="card-body">
+                    <i class="fas fa-paint-brush"></i>
+                    <div>
+                        <h5 class="card-title">Sanat Eserleri Yönetimi</h5>
+                        <p class="card-text">Sanat eserlerinizi buradan yönetebilirsiniz.</p>
+                        <a href="/artworks-list" class="btn btn-dark">Git</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 feature-card">
+            <div class="card bg-light">
+                <div class="card-body">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <div>
+                        <h5 class="card-title">Gezilecek Yerler Yönetimi</h5>
+                        <p class="card-text">Gezilecek yerleri buradan düzenleyebilirsiniz.</p>
+                        <a href="/touristic-spots-list" class="btn btn-dark">Git</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 feature-card">
+            <div class="card bg-light">
+                <div class="card-body">
+                    <i class="fas fa-file-alt"></i>
+                    <div>
+                        <h5 class="card-title">Log Yönetimi</h5>
+                        <p class="card-text">Sistem loglarını buradan görüntüleyin ve yönetin.</p>
+                        <a href="/actions" class="btn btn-dark">Git</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+<script src="/webjars/jquery/3.5.1/jquery.min.js"></script>
+<script src="/webjars/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+<script src="/js/script.js"></script>
 </body>
 </html>
